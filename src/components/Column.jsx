@@ -1,30 +1,36 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import {
-    Accordion,
-    AccordionItem,
-    AccordionButton,
-    AccordionPanel,
-    AccordionIcon,
-} from '@chakra-ui/react'
+import { Accordion, Flex, Stack } from '@chakra-ui/react'
+import { useDroppable } from '@dnd-kit/react';
+import './Column.css'
 import Tasks from "./Tasks"
-export default function Column({ column, tasks }) {
+export default function Column({ column, tasks, }) {
     // console.log(column.id, tasks)
-    const { setNodeRef } = useDroppable({
+    const { ref } = useDroppable({
         id: column.id,
     });
-    return (
-        <>
-            <h1>{column.title}</h1>
-            <Accordion allowMultiple allowToggle>
-                {tasks.map(tarea => {
-                    return <Tasks
-                        key={tarea.id}
-                        title={tarea.title}
-                        descripcion={tarea.description}
-                    />
-                })}
+    console.log(event);
 
-            </Accordion>
-        </>
+    return (
+        <div className="columnContainer"
+            ref={ref}
+            style={{
+                minHeight: "200px",   // Need a minimun height for the tasks recognize a valid space
+                width: "100%",
+            }}>
+            <Stack direction='column' className="taskBoard">
+                <h1 >{column.title}</h1>
+                <Accordion allowToggle ref={ref} className="spaceTasks">
+                    {tasks.map(tarea => {
+                        return <Tasks
+                            key={tarea.id}
+                            id={tarea.id}
+                            title={tarea.title}
+                            descripcion={tarea.description}
+                        />
+                    })}
+
+                </Accordion>
+            </Stack>
+        </div>
     )
 }

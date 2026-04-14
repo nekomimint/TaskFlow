@@ -1,3 +1,4 @@
+import './dashboard.css';
 import { useState } from 'react'
 import './App.css'
 import { Input } from '@chakra-ui/react'
@@ -9,38 +10,24 @@ import { Stack } from '@chakra-ui/react'
 import { Heading } from '@chakra-ui/react'
 import { Link } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-import {
-    Drawer,
-    DrawerBody,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerOverlay,
-    DrawerContent,
-    DrawerCloseButton,
-} from '@chakra-ui/react'
 
-import {
-    Accordion,
-    AccordionItem,
-    AccordionButton,
-    AccordionPanel,
-    AccordionIcon,
-} from '@chakra-ui/react'
-import { h1 } from 'framer-motion/client'
-import { useRef } from 'react'
 import { useDisclosure } from '@chakra-ui/react'
 import React from 'react'
 import { RadioGroup, Radio } from '@chakra-ui/react'
 import { Flex, Spacer } from '@chakra-ui/react'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import Column from './components/Column'
+import ModalTask from "./components/ModalTask"
+import SideBar from "./components/SideBar"
 import { DragDropProvider } from '@dnd-kit/react';
-import Draggable from './Draggable';
-import Droppable from './Droppable';
 
-export default function Dashboard() {
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    const [placement, setPlacement] = React.useState('left')
+export default function Dashboard({ projectId, createTasks }) {
+
+
+    const drawer = useDisclosure()
+
+    const modal = useDisclosure()
+
 
     const COLUMNS = [
         {
@@ -57,29 +44,8 @@ export default function Dashboard() {
         }
     ]
 
-    const INITIAL_TASKS = [
-        {
-            id: 1,
-            title: "Nueva Tarea",
-            description: "Una tarea para pruebas.",
-            status: "PENDING"
-        },
-        {
-            id: 2,
-            title: "Jugar Osu",
-            description: "Hay que seguir practicando.",
-            status: "DOING"
-        },
-        {
-            id: 3,
-            title: "Terminar el proyecto de DBEP",
-            description: "Seguimos con diseño y funcionalidades.",
-            status: "DONE"
-        }
-    ]
 
-    const [tasks, setTasks] = useState(INITIAL_TASKS);
-
+    const [tasks, setTasks] = React.useState([])
 
 
     return (
@@ -91,40 +57,62 @@ export default function Dashboard() {
                 <Flex className="contenedorTareas">
                     <Box className="menuOpciones">
                         {/* //* Boton que abre la barra lateral */}
-                        <Button colorScheme='blue' onClick={onOpen}>
+                        <Button colorScheme='blue' onClick={drawer.onOpen}>
                             Open
+                            <SideBar
+                                isOpen={drawer.isOpen}
+                                onClose={drawer.onClose}
+                            />
+                        </Button>
+                        {/* //* Boton que abre la barra lateral */}
+                        <Button colorScheme='blue' onClick={modal.onOpen}>
+
+                            Nueva tarea
+
+                            <ModalTask
+                                isOpen={modal.isOpen}
+                                onClose={modal.onClose}
+                                onCreateTask={createTasks}
+                                projectId={projectId}
+                            />
                         </Button>
                     </Box>
-                    <Flex className="listaTareas" >
-                        {COLUMNS.map((column) => {
-                            return <Column key={column.id} column={column} tasks={tasks.filter(task => task.status === column.id)} />
-                        })}
-                    </Flex>
+                    <DragDropProvider
+
+                        onDragEnd={(event) => {
+                            console.log(event);
+                            console.log("EVENT:", event);
+                            console.log("SOURCE:", event.operation.source);
+                            console.log("TARGET:", event.operation.target);
+                            if (event.canceled) return;
+
+                            const taskId = event.operation.source?.id;
+                            const newStatus = event.operation.target?.id;
+
+                            if (!newStatus) return;
+
+                            setTasks((prev) =>
+                                prev.map((task) =>
+                                    task.id === taskId
+                                        ? { ...task, status: newStatus }
+                                        : task
+                                )
+
+                            );
+                        }}
+                    >
+                        <Flex className="listaTareas" >
+                            {COLUMNS.map((column) => {
+                                return <Column key={column.id} column={column} tasks={tasks.filter(task => task.status === column.id)} />
+                            })}
+                        </Flex>
+                    </DragDropProvider>
                 </Flex>
 
-            </Box>
+            </Box >
 
             {/* //* Esto es la barra lateral */}
-            <Drawer placement={placement} onClose={onClose} isOpen={isOpen}>
-                <DrawerOverlay />
-                <DrawerContent>
-                    <DrawerHeader borderBottomWidth='1px'>Menú</DrawerHeader>
-                    <DrawerBody>
-                        <p>Some contents...</p>
-                        <Button onClick={onClose}>
-                            Quit
-                        </Button>
-                        <Link to="/login">
-                            <Button className="loginButton"
-                                bg="#c7c3ff"
-                                _hover={{ bg: "#7b789b" }}
-                                _active={{ bg: "#47455c" }}
-                                _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
-                            >Cerrar sesión</Button>
-                        </Link>
-                    </DrawerBody>
-                </DrawerContent>
-            </Drawer>
+
         </>
     )
 }
