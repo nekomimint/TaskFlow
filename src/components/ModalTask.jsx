@@ -8,13 +8,13 @@ import {
 } from "@chakra-ui/react"
 import { useState } from 'react'
 function ModalTask({ isOpen, onClose, onCreateTask, projectId }) {
-    const [title, setTitle] = useState("")
+    const [nameTask, setNameTask] = useState("")
     const [description, setDescription] = useState("")
 
     const handleSubmit = () => {
         const newTask = {
             id: crypto.randomUUID(),
-            title,
+            nameTask,
             description,
             status: "PENDING"
         }
@@ -23,7 +23,7 @@ function ModalTask({ isOpen, onClose, onCreateTask, projectId }) {
         onClose()
 
         // limpiar inputs
-        setTitle("")
+        setNameTask("")
         setDescription("")
     }
 
@@ -37,8 +37,8 @@ function ModalTask({ isOpen, onClose, onCreateTask, projectId }) {
                 <ModalBody>
                     <input
                         placeholder="Título"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        value={nameTask}
+                        onChange={(e) => setNameTask(e.target.value)}
                     />
 
                     <input

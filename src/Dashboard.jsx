@@ -20,10 +20,85 @@ import Column from './components/Column'
 import ModalTask from "./components/ModalTask"
 import SideBar from "./components/SideBar"
 import { DragDropProvider } from '@dnd-kit/react';
+import { useParams } from "react-router-dom";
+import { useEffect } from 'react';
+export default function Dashboard() {
 
-export default function Dashboard({ projectId, createTasks }) {
+    const { projectId } = useParams();
 
+    const [users, setUsers] = useState([]);
+    const [project, setProject] = useState(null);
+    const [tasks, setTasks] = useState([]);
 
+    useEffect(() => {
+        const data = localStorage.getItem("user");
+        if (data) {
+            const parsed = JSON.parse(data);
+            setUsers(parsed);
+
+            // Todo en el mismo useEffect, ya tienes los datos aquí
+            const foundProject = parsed[0]?.projects?.find(
+                p => p.idProject === Number(projectId)
+            );
+
+            if (foundProject) {
+                setProject(foundProject);
+                setTasks(foundProject.tasks);
+            }
+        }
+    }, [projectId]);
+
+    const handleCreateTask = (newTask) => {
+        const updatedProject = {
+            ...project, //* Copiar el proyecto
+            tasks: [...tasks, newTask] //* Copiar todas las tareas mas la nueva
+        };
+        setTasks(updatedProject.tasks); //* Decirle a react que actualice el estado
+        saveProject(updatedProject); //* mandar el nuevo proyecto a guardar en JSON
+    };
+    const handleUpdateTask = (updatedTask) => {
+        const updatedProject = {
+            ...project, //* Copiado de proyecto (copy)
+            tasks: tasks.map(task => //* Ciclo for para recorrer cada task
+                task.id === updatedTask.id  //* ¿Es la que queremos actualizar?
+                    ? updatedTask           //* Sí → la reemplaza, osea el updatedTask sustituye al task que este en el id
+                    : task                 //* No → la deja igual
+            )
+        };
+        setTasks(updatedProject.tasks);
+        saveProject(updatedProject); //* Esto es una funcion que hicimos para guardar el nuevo json generado en localstorage
+    };
+    //* Guardar el proyecto en localstorage para no perder si recargamos
+    const saveProject = (updatedProject) => {
+        setProject(updatedProject);   //* Actualiza el estado de React (osea re-renderizar)
+
+        setUsers(prev => {
+            const updated = prev.map(user => ({
+                ...user, //* Copiar todos los usuario (buena practica)
+                projects: user.projects.map(p => //* Recorremos todos los proyectos
+                    p.idProject === updatedProject.idProject
+                        ? updatedProject   //* encuentra el proyecto por id y lo reemplaza, esto es una triplete
+                        : p //* Si es el proyecto a actualizar lo cambiamos, si no lo dejamos como esta (siempre deberia ser true)
+                )
+            }));
+            localStorage.setItem("user", JSON.stringify(updated));  //* Guardar en localStorage el nuevo objeto
+            return updated; //* Le decimos a React que actualice el estado
+        });
+    };
+    //* Borrar la tarea
+    const handleDeleteTask = (taskId) => {
+        const updatedProject = {
+            ...project, //* Copiamos todo el proyecto
+            tasks: tasks.filter(task =>  //* Recorremos todo el arreglo
+                task.id !== taskId  //* ¿NO es la tarea que queremos borrar?
+                //* Sí → se queda
+                //* No → se elimina, aqui entender que el si seria que no es la tarea a borrar, y el no seria negar el
+                //* no es la tarea, osea que si la queremos borrar, entonces esta no la añadimos a la nueva lista de tareas 
+            )
+        };
+        setTasks(updatedProject.tasks);
+        saveProject(updatedProject);
+    };
     const drawer = useDisclosure()
 
     const modal = useDisclosure()
@@ -45,8 +120,6 @@ export default function Dashboard({ projectId, createTasks }) {
     ]
 
 
-    const [tasks, setTasks] = React.useState([])
-
 
     return (
         <>
@@ -59,12 +132,13 @@ export default function Dashboard({ projectId, createTasks }) {
                         {/* //* Boton que abre la barra lateral */}
                         <Button colorScheme='blue' onClick={drawer.onOpen}>
                             Open
-                            <SideBar
-                                isOpen={drawer.isOpen}
-                                onClose={drawer.onClose}
-                            />
+
                         </Button>
-                        {/* //* Boton que abre la barra lateral */}
+                        <SideBar
+                            isOpen={drawer.isOpen}
+                            onClose={drawer.onClose}
+                        />
+                        {/* //* Boton para agregar nuevas tareas */}
                         <Button colorScheme='blue' onClick={modal.onOpen}>
 
                             Nueva tarea
@@ -72,41 +146,64 @@ export default function Dashboard({ projectId, createTasks }) {
                             <ModalTask
                                 isOpen={modal.isOpen}
                                 onClose={modal.onClose}
-                                onCreateTask={createTasks}
+                                onCreateTask={handleCreateTask}
                                 projectId={projectId}
                             />
                         </Button>
+                        <div>
+                            Current project: {projectId}
+                        </div>
                     </Box>
-                    <DragDropProvider
+                    <Tabs>
+                        <TabList>
+                            <Tab>Tareas</Tab>
+                            <Tab>Resumen</Tab>
+                            <Tab>Three</Tab>
+                        </TabList>
 
-                        onDragEnd={(event) => {
-                            console.log(event);
-                            console.log("EVENT:", event);
-                            console.log("SOURCE:", event.operation.source);
-                            console.log("TARGET:", event.operation.target);
-                            if (event.canceled) return;
+                        <TabPanels>
+                            <TabPanel>
+                                <DragDropProvider
 
-                            const taskId = event.operation.source?.id;
-                            const newStatus = event.operation.target?.id;
+                                    onDragEnd={(event) => {
+                                        console.log(event);
+                                        console.log("EVENT:", event);
+                                        console.log("SOURCE:", event.operation.source);
+                                        console.log("TARGET:", event.operation.target);
+                                        if (event.canceled) return;
 
-                            if (!newStatus) return;
+                                        const taskId = event.operation.source?.id;
+                                        const newStatus = event.operation.target?.id;
 
-                            setTasks((prev) =>
-                                prev.map((task) =>
-                                    task.id === taskId
-                                        ? { ...task, status: newStatus }
-                                        : task
-                                )
+                                        if (!newStatus) return;
 
-                            );
-                        }}
-                    >
-                        <Flex className="listaTareas" >
-                            {COLUMNS.map((column) => {
-                                return <Column key={column.id} column={column} tasks={tasks.filter(task => task.status === column.id)} />
-                            })}
-                        </Flex>
-                    </DragDropProvider>
+                                        setTasks((prev) =>
+                                            prev.map((task) =>
+                                                task.id === taskId
+                                                    ? { ...task, status: newStatus }
+                                                    : task
+                                            )
+
+                                        );
+                                    }}
+                                >
+
+                                    <Flex className="listaTareas" >
+                                        {COLUMNS.map((column) => {
+                                            return <Column key={column.id} column={column} tasks={tasks.filter(task => task.status === column.id)} />
+                                        })}
+                                    </Flex>
+                                </DragDropProvider>
+                            </TabPanel>
+                            <TabPanel>
+                                <p>Calendario</p>
+                            </TabPanel>
+                            <TabPanel>
+                                <p>three!</p>
+                            </TabPanel>
+                        </TabPanels>
+                    </Tabs>
+
                 </Flex>
 
             </Box >

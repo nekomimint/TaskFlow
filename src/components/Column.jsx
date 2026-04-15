@@ -24,7 +24,7 @@ export default function Column({ column, tasks, }) {
                         return <Tasks
                             key={tarea.id}
                             id={tarea.id}
-                            title={tarea.title}
+                            title={tarea.nameTask}
                             descripcion={tarea.description}
                         />
                     })}
