@@ -19,11 +19,11 @@ export default function Column({ column, tasks, }) {
             }}>
             <Stack direction='column' className="taskBoard">
                 <h1 >{column.title}</h1>
-                <Accordion allowToggle ref={ref} className="spaceTasks">
+                <Accordion allowToggle className="spaceTasks">
                     {tasks.map(tarea => {
                         return <Tasks
-                            key={tarea.id}
-                            id={tarea.id}
+                            key={tarea.idTask}
+                            id={tarea.idTask}
                             title={tarea.nameTask}
                             descripcion={tarea.description}
                         />

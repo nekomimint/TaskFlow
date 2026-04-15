@@ -18,7 +18,7 @@ export default function App() {
           idProject: 1,
           nameProject: "New Project",
           tasks: [{
-            idTask: "1",
+            idTask: crypto.randomUUID(),
             nameTask: "New Task",
             description: "Desc",
             status: "PENDING"
@@ -30,7 +30,7 @@ export default function App() {
           idProject: 4,
           nameProject: "Second project",
           tasks: [{
-            idTask: "1",
+            idTask: crypto.randomUUID(),
             nameTask: "New Task",
             description: "Desc",
             status: "PENDING"
@@ -42,7 +42,7 @@ export default function App() {
           idProject: 7,
           nameProject: "Ultimate tasker",
           tasks: [{
-            idTask: "1",
+            idTask: crypto.randomUUID(),
             nameTask: "New Task",
             description: "Desc",
             status: "PENDING"
@@ -56,7 +56,6 @@ export default function App() {
 
   if (!localStorage.getItem("user")) {
     localStorage.setItem("user", JSON.stringify(dataUser))
-
   }
   const [projects, setProjects] = React.useState([
     {

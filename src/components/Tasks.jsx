@@ -8,7 +8,6 @@ import {
 import { Box } from '@chakra-ui/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { useDraggable } from '@dnd-kit/react';
-import { div } from 'framer-motion/client';
 import { PhoneIcon, AddIcon, WarningIcon } from '@chakra-ui/icons'
 import AppIcon from "./AppIcon"
 import './Tasks.css'
@@ -18,7 +17,7 @@ export default function Tasks({ id, title, descripcion, status }) {
     });
     return (
         <div ref={ref}  {...attributes}>
-            <AccordionItem {...listeners}>
+            <AccordionItem>
                 <h2>
                     <div className="buttonHeader">
                         <AppIcon name="LuGrip" {...listeners} {...attributes} />

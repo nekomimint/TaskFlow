@@ -99,6 +99,21 @@ export default function Dashboard() {
         setTasks(updatedProject.tasks);
         saveProject(updatedProject);
     };
+    //* Funcion para cuando movemos las tareas actualizar su status no solo en pagina si no en JSON tambien
+    const handleMoved = (taskId, newStatus) => {
+        const updatedProject = {
+            ...project,
+            tasks: tasks.map(task =>
+                task.idTask === taskId
+                    ? { ...task, status: newStatus }  // copia la task y reemplaza solo el status
+                    : task
+            )
+        };
+        setTasks(updatedProject.tasks);
+        saveProject(updatedProject);
+    };
+
+    //* Unas constantes que usa chakra
     const drawer = useDisclosure()
 
     const modal = useDisclosure()
@@ -179,13 +194,15 @@ export default function Dashboard() {
 
                                         setTasks((prev) =>
                                             prev.map((task) =>
-                                                task.id === taskId
+                                                task.idTask === taskId
                                                     ? { ...task, status: newStatus }
                                                     : task
                                             )
 
                                         );
-                                    }}
+                                        handleMoved(taskId, newStatus);  // aquí
+                                    }
+                                    }
                                 >
 
                                     <Flex className="listaTareas" >
