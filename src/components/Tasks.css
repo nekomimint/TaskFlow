@@ -1,4 +1,29 @@
 .buttonHeader {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-left: 1.5%;
+    padding-right: 1.5%;
+}
+
+.iconStyle {
+    min-width: 0;
+}
+
+.accordionInfo {
+    padding-bottom: 8;
+}
+
+.optionIcons {
+    gap: 3%;
+}
+
+.taskInfo {
+    align-items: center;
+
+}
+
+.accordionStyle {
+    gap: 1%;
 }

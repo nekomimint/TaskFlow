@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { Button } from "@chakra-ui/react"
 import { useDisclosure } from "@chakra-ui/react"
 import { useState, useEffect } from "react"
+import ModalProject from "./components/ModalProject"
 export default function ProjectsViewer() {
 
     const [users, setUsers] = useState([]);
@@ -14,6 +15,39 @@ export default function ProjectsViewer() {
         }
     }, []);
     const drawer = useDisclosure()
+    const modal = useDisclosure();
+    const projectBase = {
+        id: 1,
+        userName: "New User",
+        profilePhoto: null, // This can be null is user not upload photo and will passed as base64
+        password: "DefaultPassword",
+        projects: [
+            // Project base
+            {
+                idProject: 1,
+                nameProject: "New Project",
+                tasks: [{
+                    idTask: crypto.randomUUID(),
+                    nameTask: "New Task",
+                    description: "Desc",
+                    deadLine: "date",
+                    status: "PENDING"
+                }]
+            }
+        ]
+    }
+    const handleNewProjects = (newProject) => {
+        setUsers(prev => {
+            const updated = prev.map(user => ({
+                ...user,
+                projects: [...user.projects, newProject]  // agrega el proyecto al usuario
+            }));
+            localStorage.setItem("user", JSON.stringify(updated));  // persiste
+            return updated;
+        });
+    };
+
+
 
     return (
         <>
@@ -44,6 +78,17 @@ export default function ProjectsViewer() {
                     ))}
                 </div>
             ))}
+
+            <Button onClick={modal.onOpen}>
+                New project
+
+                <ModalProject
+                    isOpen={modal.isOpen}
+                    onClose={modal.onClose}
+                    onCreateProject={handleNewProjects}
+
+                />
+            </Button>
 
             <Button colorScheme='blue' onClick={drawer.onOpen}>
                 Drawer

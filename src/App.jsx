@@ -4,8 +4,9 @@ import Login from "./login"
 import Dashboard from "./dashboard"
 import ProjectsViewer from "./ProjectsViewer"
 import React from "react";
+import { useState } from "react";
 export default function App() {
-
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0])
   const dataUser = ([
     {
       id: 1,
@@ -21,6 +22,7 @@ export default function App() {
             idTask: crypto.randomUUID(),
             nameTask: "New Task",
             description: "Desc",
+            deadLine: date,
             status: "PENDING"
           }]
         },
@@ -33,6 +35,7 @@ export default function App() {
             idTask: crypto.randomUUID(),
             nameTask: "New Task",
             description: "Desc",
+            deadLine: date,
             status: "PENDING"
           }]
         },
@@ -45,6 +48,7 @@ export default function App() {
             idTask: crypto.randomUUID(),
             nameTask: "New Task",
             description: "Desc",
+            deadLine: date,
             status: "PENDING"
           }]
         },
