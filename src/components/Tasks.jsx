@@ -18,13 +18,23 @@ import { LuTrash2 } from "react-icons/lu"
 import { LuPencilLine } from "react-icons/lu";
 
 
-export default function Tasks({ id, title, descripcion, status }) {
+export default function Tasks({ id, title, descripcion, status, onEditTask }) {
     const { ref, listeners, attributes } = useDraggable({
         id: id,
     });
 
     function handleDelete() {
 
+    }
+
+    function handleEdit() {
+        const newTitle = prompt("Nuevo título:", title);
+        if (!newTitle) return;
+
+        const newDesc = prompt("Nueva descripción:", descripcion);
+        if (!newDesc) return;
+
+        onEditTask(id, newTitle, newDesc);
     }
     return (
         <div ref={ref}  {...attributes}>
@@ -53,7 +63,7 @@ export default function Tasks({ id, title, descripcion, status }) {
                             <ButtonIcon
                                 icon={<LuPencilLine />}
                                 label="Editar tarea"
-                                onClick={handleDelete}
+                                onClick={handleEdit}
                             />
                         </div>
                     </Flex>
