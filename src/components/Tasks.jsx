@@ -18,11 +18,7 @@ import { LuTrash2 } from "react-icons/lu"
 import { LuPencilLine } from "react-icons/lu";
 
 
-<<<<<<< HEAD
 export default function Tasks({ id, title, descripcion, status, onEditTask }) {
-=======
-export default function Tasks({ id, title, descripcion, status }) {
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
     const { ref, listeners, attributes } = useDraggable({
         id: id,
     });
@@ -30,7 +26,6 @@ export default function Tasks({ id, title, descripcion, status }) {
     function handleDelete() {
 
     }
-<<<<<<< HEAD
 
     function handleEdit() {
         const newTitle = prompt("Nuevo título:", title);
@@ -41,8 +36,6 @@ export default function Tasks({ id, title, descripcion, status }) {
 
         onEditTask(id, newTitle, newDesc);
     }
-=======
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
     return (
         <div ref={ref}  {...attributes}>
             <AccordionItem className="accordionStyle" >
@@ -70,11 +63,7 @@ export default function Tasks({ id, title, descripcion, status }) {
                             <ButtonIcon
                                 icon={<LuPencilLine />}
                                 label="Editar tarea"
-<<<<<<< HEAD
                                 onClick={handleEdit}
-=======
-                                onClick={handleDelete}
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                             />
                         </div>
                     </Flex>

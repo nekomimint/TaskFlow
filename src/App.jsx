@@ -77,11 +77,7 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard/:projectId" element={<Dashboard />} />
-<<<<<<< HEAD
-        <Route path="/projects" element={<ProjectsViewer />} />
-=======
         <Route path="/projects/:userId" element={<ProjectsViewer />} />
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
       </Routes>
 
     </ChakraProvider>

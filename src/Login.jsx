@@ -16,15 +16,6 @@ import { AnimatePresence } from 'framer-motion'
 import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Flex } from '@chakra-ui/react'
-<<<<<<< HEAD
-export default function Login() {
-
-    const [preview, setPreview] = useState('/photos/defaultUser.png')
-    const onDrop = useCallback((acceptedFiles) => {
-        const file = acceptedFiles[0]
-        if (!file) return
-        // validar 1MB
-=======
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 export default function Login() {
@@ -121,29 +112,15 @@ export default function Login() {
         const file = acceptedFiles[0]
         if (!file) return
 
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
         if (file.size > 1 * 1024 * 1024) {
             alert("La imagen no puede superar 1MB")
             return
         }
 
-<<<<<<< HEAD
-        // convertir a base64 para guardar en localStorage
-        const reader = new FileReader()
-        reader.onload = () => {
-            const base64 = reader.result
-            setPreview(base64)
-
-            // guardar en localStorage
-            const datos = JSON.parse(localStorage.getItem("taskflow") || "{}")
-            datos.usuario = { ...datos.usuario, fotoPerfil: base64 }
-            localStorage.setItem("taskflow", JSON.stringify(datos))
-=======
         const reader = new FileReader()
         reader.onload = () => {
             const base64 = reader.result
             setProfilePhoto(base64)
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
         }
         reader.readAsDataURL(file)
     }, [])
@@ -155,10 +132,7 @@ export default function Login() {
         maxSize: 1 * 1024 * 1024
     })
 
-<<<<<<< HEAD
-=======
     //* Avoid create account if null params
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
     const [createAccount, setCreateAccount] = useState(false)
     console.log(createAccount)
     return (
@@ -189,11 +163,7 @@ export default function Login() {
                                         <Heading textAlign="Center" as="h2" size="md">Nueva cuenta</Heading>
                                         <Flex {...getRootProps()} className="avatarContainer">
                                             <input {...getInputProps()} />
-<<<<<<< HEAD
-                                            <Avatar src={preview} size="xl" opacity={isDragActive ? 0.5 : 1}>
-=======
                                             <Avatar src={profilePhoto} size="xl" opacity={isDragActive ? 0.5 : 1}>
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                                                 <AvatarBadge boxSize='1em' bg='#c7c3ff' />
                                             </Avatar>
                                             <Text>
@@ -207,34 +177,18 @@ export default function Login() {
                                         <Input placeholder='Usuario | Correo electronico'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
-<<<<<<< HEAD
-=======
                                             onChange={(e) => setUserName(e.target.value)}
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                                         />
                                         <Input type="password"
                                             placeholder='Contraseña'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
-<<<<<<< HEAD
-=======
                                             onChange={(e) => setPassword(e.target.value)}
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                                         />
                                         <Center>
                                             <Button onClick={() => setCreateAccount(false)}>
                                                 ¿Ya tienes una cuenta?
                                             </Button>
-<<<<<<< HEAD
-                                            <Link to="/projects">
-                                                <Button className="loginButton"
-                                                    bg="#c7c3ff"
-                                                    _hover={{ bg: "#7b789b" }}
-                                                    _active={{ bg: "#47455c" }}
-                                                    _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
-                                                >Entrar</Button>
-                                            </Link>
-=======
 
                                             <Button className="loginButton" onClick={handleSubmit}
                                                 bg="#c7c3ff"
@@ -242,7 +196,6 @@ export default function Login() {
                                                 _active={{ bg: "#47455c" }}
                                                 _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
                                             >Crear cuenta</Button>
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                                         </Center>
                                     </Stack>
 
@@ -267,34 +220,18 @@ export default function Login() {
                                         <Input placeholder='Usuario | Correo electronico'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
-<<<<<<< HEAD
-=======
                                             onChange={(e) => setUserNameLogin(e.target.value)}
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                                         />
                                         <Input type="password"
                                             placeholder='Contraseña'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
-<<<<<<< HEAD
-=======
                                             onChange={(e) => setPasswordLogin(e.target.value)}
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                                         />
                                         <Center>
                                             <Button onClick={() => setCreateAccount(true)}>
                                                 Crear una cuenta
                                             </Button>
-<<<<<<< HEAD
-                                            <Link to="/projects">
-                                                <Button className="loginButton"
-                                                    bg="#c7c3ff"
-                                                    _hover={{ bg: "#7b789b" }}
-                                                    _active={{ bg: "#47455c" }}
-                                                    _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
-                                                >Entrar</Button>
-                                            </Link>
-=======
 
                                             <Button className="loginButton" onClick={handleLogin}
                                                 bg="#c7c3ff"
@@ -303,7 +240,6 @@ export default function Login() {
                                                 _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
                                             >Entrar</Button>
 
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                                         </Center>
                                     </Stack>
 

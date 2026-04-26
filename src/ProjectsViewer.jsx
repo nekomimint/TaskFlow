@@ -3,19 +3,6 @@ import { Link } from "react-router-dom"
 import { Button } from "@chakra-ui/react"
 import { useDisclosure } from "@chakra-ui/react"
 import { useState, useEffect } from "react"
-<<<<<<< HEAD
-import ModalProject from "./components/ModalProject"
-export default function ProjectsViewer() {
-
-    const [users, setUsers] = useState([]);
-    const [projects, setProjects] = useState([]);
-    useEffect(() => {
-        const data = localStorage.getItem("user");
-        if (data) {
-            setUsers(JSON.parse(data));
-        }
-    }, []);
-=======
 import { useParams } from "react-router-dom"
 import ModalProject from "./components/ModalProject"
 import { Avatar, AvatarBadge } from "@chakra-ui/react"
@@ -44,7 +31,6 @@ export default function ProjectsViewer() {
 
     }, [userId])
 
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
     const drawer = useDisclosure()
     const modal = useDisclosure();
     const projectBase = {
@@ -69,51 +55,21 @@ export default function ProjectsViewer() {
     }
     const handleNewProjects = (newProject) => {
         setUsers(prev => {
-<<<<<<< HEAD
-            const updated = prev.map(user => ({
-                ...user,
-                projects: [...user.projects, newProject]  // agrega el proyecto al usuario
-            }));
-            localStorage.setItem("user", JSON.stringify(updated));  // persiste
-=======
             const updated = prev.map(user =>
                 user.id === userId  // solo el usuario actual
                     ? { ...user, projects: [...user.projects, newProject] }
                     : user
             );
             localStorage.setItem("user", JSON.stringify(updated));
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
             return updated;
         });
     };
 
-<<<<<<< HEAD
-
-=======
     console.log("profilePhoto:", currentUser?.profilePhoto)
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
 
     return (
         <>
 
-<<<<<<< HEAD
-            {users.map(user => (
-
-
-                <div key={user.id}>
-                    <h2>{user.userName}</h2>
-
-                    {user.projects.map(project => (
-                        <div key={project.idProject}>
-                            <h3>{project.nameProject}</h3>
-                            <Link to={`/dashboard/${project.idProject}`} >
-                                <Button className="enterProject"
-                                    bg="#c7c3ff"
-                                    _hover={{ bg: "#7b789b" }}
-                                    _active={{ bg: "#47455c" }}
-                                    _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
-                                >Go</Button>
-=======
             <Avatar
                 src={currentUser?.profilePhoto ?? undefined}
                 size="xl"
@@ -129,7 +85,6 @@ export default function ProjectsViewer() {
                             <h3>{project.nameProject}</h3>
                             <Link to={`/dashboard/${project.idProject}`}>
                                 <Button>Go</Button>
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                             </Link>
                             {project.tasks.map(task => (
                                 <p key={task.idTask}>
@@ -139,11 +94,7 @@ export default function ProjectsViewer() {
                         </div>
                     ))}
                 </div>
-<<<<<<< HEAD
-            ))}
-=======
             )}
->>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
 
             <Button onClick={modal.onOpen}>
                 New project
