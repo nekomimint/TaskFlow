@@ -16,38 +16,108 @@ import { AnimatePresence } from 'framer-motion'
 import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Flex } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 export default function Login() {
 
+    const navigate = useNavigate()
+    //* Create account
+    const [users, setUsers] = useState([])
+    const [userName, setUserName] = useState("")
+    const [password, setPassword] = useState("")
+    const [profilePhoto, setProfilePhoto] = useState(null)
+    // Y carga el localStorage al montar el componente
+    useEffect(() => {
+        const data = localStorage.getItem("user")
+        if (data) {
+            setUsers(JSON.parse(data))
+        }
+    }, [])
+
+    const handleCreateUser = (newUser) => {
+        setUsers(prev => {
+            const updated = [...prev, newUser]  // agrega el usuario al arreglo
+            localStorage.setItem("user", JSON.stringify(updated))
+            return updated
+        })
+    }
+
+
+    const handleSubmit = () => {
+        console.log("1. userName:", userName)
+        console.log("2. password:", password)
+        console.log("3. profilePhoto:", profilePhoto)
+        if (!userName.trim() || !password.trim()) return  // validación básica
+
+        const newUser = {
+            id: crypto.randomUUID(),
+            userName,
+            password,
+            profilePhoto: profilePhoto,
+            projects: [
+
+                {
+                    idProject: 1,
+                    nameProject: "New Project",
+                    tasks: [{
+                        idTask: crypto.randomUUID(),
+                        nameTask: "New Task",
+                        description: "Desc",
+                        deadLine: "date",
+                        status: "PENDING"
+                    }]
+                }
+            ]
+        }
+        console.log("4. newUser creado:", newUser)
+
+        handleCreateUser(newUser)
+        console.log("5. navigate a:", `/projects/${newUser.id}`)
+        navigate(`/projects/${newUser.id}`)
+    }
+
+
+
+
+    //* Login into account
+    const [userNameLogin, setUserNameLogin] = useState("")
+    const [passwordLogin, setPasswordLogin] = useState("")
+
+
+
     const [preview, setPreview] = useState('/photos/defaultUser.png')
+
     const onDrop = useCallback((acceptedFiles) => {
         const file = acceptedFiles[0]
         if (!file) return
-        // validar 1MB
+
         if (file.size > 1 * 1024 * 1024) {
             alert("La imagen no puede superar 1MB")
             return
         }
 
-        // convertir a base64 para guardar en localStorage
         const reader = new FileReader()
         reader.onload = () => {
             const base64 = reader.result
-            setPreview(base64)
-
-            // guardar en localStorage
-            const datos = JSON.parse(localStorage.getItem("taskflow") || "{}")
-            datos.usuario = { ...datos.usuario, fotoPerfil: base64 }
-            localStorage.setItem("taskflow", JSON.stringify(datos))
+            setProfilePhoto(base64)
         }
         reader.readAsDataURL(file)
     }, [])
 
+    // 2. Luego lo pasas al useDropzone
     const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
         onDrop,
         accept: { 'image/*': [] },
         maxFiles: 1,
         maxSize: 1 * 1024 * 1024
     })
+
+
+
+    //* Guardar imagen
+
+
+
 
     const [createAccount, setCreateAccount] = useState(false)
     console.log(createAccount)
@@ -79,7 +149,7 @@ export default function Login() {
                                         <Heading textAlign="Center" as="h2" size="md">Nueva cuenta</Heading>
                                         <Flex {...getRootProps()} className="avatarContainer">
                                             <input {...getInputProps()} />
-                                            <Avatar src={preview} size="xl" opacity={isDragActive ? 0.5 : 1}>
+                                            <Avatar src={profilePhoto} size="xl" opacity={isDragActive ? 0.5 : 1}>
                                                 <AvatarBadge boxSize='1em' bg='#c7c3ff' />
                                             </Avatar>
                                             <Text>
@@ -93,24 +163,25 @@ export default function Login() {
                                         <Input placeholder='Usuario | Correo electronico'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
+                                            onChange={(e) => setUserName(e.target.value)}
                                         />
                                         <Input type="password"
                                             placeholder='Contraseña'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
+                                            onChange={(e) => setPassword(e.target.value)}
                                         />
                                         <Center>
                                             <Button onClick={() => setCreateAccount(false)}>
                                                 ¿Ya tienes una cuenta?
                                             </Button>
-                                            <Link to="/projects">
-                                                <Button className="loginButton"
-                                                    bg="#c7c3ff"
-                                                    _hover={{ bg: "#7b789b" }}
-                                                    _active={{ bg: "#47455c" }}
-                                                    _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
-                                                >Entrar</Button>
-                                            </Link>
+
+                                            <Button className="loginButton" onClick={handleSubmit}
+                                                bg="#c7c3ff"
+                                                _hover={{ bg: "#7b789b" }}
+                                                _active={{ bg: "#47455c" }}
+                                                _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
+                                            >Crear cuenta</Button>
                                         </Center>
                                     </Stack>
 
@@ -135,11 +206,13 @@ export default function Login() {
                                         <Input placeholder='Usuario | Correo electronico'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
+                                            onChange={(e) => setUserNameLogin(e.target.value)}
                                         />
                                         <Input type="password"
                                             placeholder='Contraseña'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
+                                            onChange={(e) => setPasswordLogin(e.target.value)}
                                         />
                                         <Center>
                                             <Button onClick={() => setCreateAccount(true)}>

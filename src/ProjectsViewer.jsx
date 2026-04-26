@@ -3,17 +3,34 @@ import { Link } from "react-router-dom"
 import { Button } from "@chakra-ui/react"
 import { useDisclosure } from "@chakra-ui/react"
 import { useState, useEffect } from "react"
+import { useParams } from "react-router-dom"
 import ModalProject from "./components/ModalProject"
+import { Avatar, AvatarBadge } from "@chakra-ui/react"
 export default function ProjectsViewer() {
-
+    const { userId } = useParams();
     const [users, setUsers] = useState([]);
     const [projects, setProjects] = useState([]);
+    const [currentUser, setCurrentUser] = useState();
+
     useEffect(() => {
-        const data = localStorage.getItem("user");
-        if (data) {
-            setUsers(JSON.parse(data));
+
+
+        const data = localStorage.getItem('user');
+
+        if (data) { // SI no esta vacio
+            const dataParsed = JSON.parse(data);
+
+            setUsers(dataParsed); // Aqui almacenamos a todos los usuarios por el momento.
+
+            const actualUser = dataParsed.find(user => user.id === userId); //* Aqui vamos comparando los usuarios hasta coincidir con el de su id
+            //* Y metemos todo a CurrentUser
+            setCurrentUser(actualUser);
+            console.log("4. foundUser:", actualUser)
+
         }
-    }, []);
+
+    }, [userId])
+
     const drawer = useDisclosure()
     const modal = useDisclosure();
     const projectBase = {
@@ -38,36 +55,36 @@ export default function ProjectsViewer() {
     }
     const handleNewProjects = (newProject) => {
         setUsers(prev => {
-            const updated = prev.map(user => ({
-                ...user,
-                projects: [...user.projects, newProject]  // agrega el proyecto al usuario
-            }));
-            localStorage.setItem("user", JSON.stringify(updated));  // persiste
+            const updated = prev.map(user =>
+                user.id === userId  // solo el usuario actual
+                    ? { ...user, projects: [...user.projects, newProject] }
+                    : user
+            );
+            localStorage.setItem("user", JSON.stringify(updated));
             return updated;
         });
     };
 
-
+    console.log("profilePhoto:", currentUser?.profilePhoto)
 
     return (
         <>
 
-            {users.map(user => (
+            <Avatar
+                src={currentUser?.profilePhoto ?? undefined}
+                size="xl"
+            >
+                <AvatarBadge boxSize='1em' bg='#c7c3ff' />
+            </Avatar>
+            {currentUser && (
+                <div key={currentUser.id}>
+                    <h2>{currentUser.userName}</h2>
 
-
-                <div key={user.id}>
-                    <h2>{user.userName}</h2>
-
-                    {user.projects.map(project => (
+                    {currentUser.projects.map(project => (
                         <div key={project.idProject}>
                             <h3>{project.nameProject}</h3>
-                            <Link to={`/dashboard/${project.idProject}`} >
-                                <Button className="enterProject"
-                                    bg="#c7c3ff"
-                                    _hover={{ bg: "#7b789b" }}
-                                    _active={{ bg: "#47455c" }}
-                                    _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
-                                >Go</Button>
+                            <Link to={`/dashboard/${project.idProject}`}>
+                                <Button>Go</Button>
                             </Link>
                             {project.tasks.map(task => (
                                 <p key={task.idTask}>
@@ -77,7 +94,7 @@ export default function ProjectsViewer() {
                         </div>
                     ))}
                 </div>
-            ))}
+            )}
 
             <Button onClick={modal.onOpen}>
                 New project

@@ -77,7 +77,7 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard/:projectId" element={<Dashboard />} />
-        <Route path="/projects" element={<ProjectsViewer />} />
+        <Route path="/projects/:userId" element={<ProjectsViewer />} />
       </Routes>
 
     </ChakraProvider>
