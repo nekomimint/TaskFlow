@@ -2,10 +2,14 @@ import { Icon } from '@chakra-ui/react'
 import { LuGrip, } from "react-icons/lu";
 import { LuPencilLine } from "react-icons/lu";
 import { LuTrash2 } from "react-icons/lu";
+import { LuMoon } from "react-icons/lu";
+import { LuSunDim } from "react-icons/lu";
 const iconMap = {
     LuGrip,
     LuPencilLine,
     LuTrash2,
+    LuMoon,
+    LuSunDim,
     // agrega los que necesites...
 };
 

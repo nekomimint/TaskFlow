@@ -13,7 +13,7 @@ export default function App() {
       userName: "New User",
       profilePhoto: null, // This can be null is user not upload photo and will passed as base64
       password: "DefaultPassword",
-      projects: [
+      projects: [ //* Todos los proyectos de los cuales el usuario es propietario
         // Project base
         {
           idProject: 1,
@@ -23,38 +23,14 @@ export default function App() {
             nameTask: "New Task",
             description: "Desc",
             deadLine: date,
-            status: "PENDING"
-          }]
+            status: "PENDING",
+            priority: "HIGH",
+            usersAsigned: [], //* Todos los usuarios asignado a la tarea
+          }],
+          sharedUsers: [] //* Todas los usuarios que participan en el proyecto, (UUID)
         },
-        // Project ends
-        // Project base
-        {
-          idProject: 4,
-          nameProject: "Second project",
-          tasks: [{
-            idTask: crypto.randomUUID(),
-            nameTask: "New Task",
-            description: "Desc",
-            deadLine: date,
-            status: "PENDING"
-          }]
-        },
-        // Project ends
-        // Project base
-        {
-          idProject: 7,
-          nameProject: "Ultimate tasker",
-          tasks: [{
-            idTask: crypto.randomUUID(),
-            nameTask: "New Task",
-            description: "Desc",
-            deadLine: date,
-            status: "PENDING"
-          }]
-        },
-        // Project ends
-      ]
-
+      ],
+      sharedProjects: [], //* Todos los proyectos compartidos con el usuario
     }
   ])
 

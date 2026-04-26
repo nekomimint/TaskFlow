@@ -17,7 +17,7 @@ import { RadioGroup, Radio } from '@chakra-ui/react'
 import { Flex, Spacer } from '@chakra-ui/react'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import Column from './components/Column'
-import ModalTask from "./components/ModalTask"
+import ModalTask from "./components/tasks/ModalTask"
 import SideBar from "./components/SideBar"
 import { DragDropProvider } from '@dnd-kit/react';
 import { useParams } from "react-router-dom";
@@ -48,7 +48,7 @@ export default function Dashboard() {
         }
     }, [projectId]);
 
-        const handleEditTask = (idTask, newTitle, newDesc) => {
+    const handleEditTask = (idTask, newTitle, newDesc) => {
         const updatedTasks = tasks.map(task =>
             task.idTask === idTask
                 ? { ...task, nameTask: newTitle, description: newDesc }
@@ -59,7 +59,7 @@ export default function Dashboard() {
         saveProject({ ...project, tasks: updatedTasks });
     };
 
-        const handleDeleteTask = (taskId) => {
+    const handleDeleteTask = (taskId) => {
         const updatedTasks = tasks.filter(task =>
             task.idTask !== taskId
         );
@@ -105,7 +105,7 @@ export default function Dashboard() {
             return updated; //* Le decimos a React que actualice el estado
         });
     };
-  
+
     //* Funcion para cuando movemos las tareas actualizar su status no solo en pagina si no en JSON tambien
     const handleMoved = (taskId, newStatus) => {
         const updatedProject = {
@@ -214,12 +214,12 @@ export default function Dashboard() {
 
                                     <Flex className="listaTareas" >
                                         {COLUMNS.map((column) => {
-                                            return <Column 
-                                             key={column.id}
-                                             column={column}
-                                             tasks={tasks.filter(task => task.status === column.id)} 
-                                             onEditTask={handleEditTask} 
-                                             onDeleteTask={handleDeleteTask} />
+                                            return <Column
+                                                key={column.id}
+                                                column={column}
+                                                tasks={tasks.filter(task => task.status === column.id)}
+                                                onEditTask={handleEditTask}
+                                                onDeleteTask={handleDeleteTask} />
                                         })}
                                     </Flex>
                                 </DragDropProvider>

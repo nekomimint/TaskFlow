@@ -47,12 +47,12 @@ export default function Tasks({ id, title, descripcion, status, onEditTask, onDe
     return (
         <div ref={ref}  {...attributes}>
             <AccordionItem className="accordionStyle"
-            style={{
-                backgroundColor: taskBg,
-                color: taskText,
-                borderRadius: "8px",
-                marginBottom: "10px"
-            }} >
+                style={{
+                    backgroundColor: taskBg,
+                    color: taskText,
+                    borderRadius: "8px",
+                    marginBottom: "10px"
+                }} >
                 <h2>
                     <div className="buttonHeader">
                         <AppIcon name="LuGrip" {...listeners} {...attributes} className="iconStyle" />
