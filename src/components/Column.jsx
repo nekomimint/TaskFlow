@@ -3,7 +3,7 @@ import { Accordion, Flex, Stack } from '@chakra-ui/react'
 import { useDroppable } from '@dnd-kit/react';
 import './Column.css'
 import Tasks from "./Tasks"
-export default function Column({ column, tasks, onEditTask }) {
+export default function Column({ column, tasks, onEditTask, onDeleteTask }) {
     // console.log(column.id, tasks)
     const { ref } = useDroppable({
         id: column.id,
@@ -28,7 +28,7 @@ export default function Column({ column, tasks, onEditTask }) {
                             descripcion={tarea.description}
                             status={tarea.status}
                             onEditTask={onEditTask}
-                            
+                            onDeleteTask={onDeleteTask}
                         />
                     })}
 

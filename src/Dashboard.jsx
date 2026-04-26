@@ -59,6 +59,15 @@ export default function Dashboard() {
         saveProject({ ...project, tasks: updatedTasks });
     };
 
+        const handleDeleteTask = (taskId) => {
+        const updatedTasks = tasks.filter(task =>
+            task.idTask !== taskId
+        );
+
+        setTasks(updatedTasks);
+        saveProject({ ...project, tasks: updatedTasks });
+    };
+
     const handleCreateTask = (newTask) => {
         const updatedProject = {
             ...project, //* Copiar el proyecto
@@ -97,7 +106,7 @@ export default function Dashboard() {
         });
     };
     //* Borrar la tarea
-    const handleDeleteTask = (taskId) => {
+   /* const handleDeleteTask = (taskId) => {
         const updatedProject = {
             ...project, //* Copiamos todo el proyecto
             tasks: tasks.filter(task =>  //* Recorremos todo el arreglo
@@ -109,7 +118,7 @@ export default function Dashboard() {
         };
         setTasks(updatedProject.tasks);
         saveProject(updatedProject);
-    };
+    };*/
     //* Funcion para cuando movemos las tareas actualizar su status no solo en pagina si no en JSON tambien
     const handleMoved = (taskId, newStatus) => {
         const updatedProject = {
@@ -218,7 +227,12 @@ export default function Dashboard() {
 
                                     <Flex className="listaTareas" >
                                         {COLUMNS.map((column) => {
-                                            return <Column key={column.id} column={column} tasks={tasks.filter(task => task.status === column.id)} onEditTask={handleEditTask} />
+                                            return <Column 
+                                             key={column.id}
+                                             column={column}
+                                             tasks={tasks.filter(task => task.status === column.id)} 
+                                             onEditTask={handleEditTask} 
+                                             onDeleteTask={handleDeleteTask} />
                                         })}
                                     </Flex>
                                 </DragDropProvider>

@@ -18,13 +18,16 @@ import { LuTrash2 } from "react-icons/lu"
 import { LuPencilLine } from "react-icons/lu";
 
 
-export default function Tasks({ id, title, descripcion, status, onEditTask }) {
+export default function Tasks({ id, title, descripcion, status, onEditTask, onDeleteTask }) {
     const { ref, listeners, attributes } = useDraggable({
         id: id,
     });
 
     function handleDelete() {
+        const confirmDelete = confirm("¿Eliminar tarea?");
+        if (!confirmDelete) return;
 
+        onDeleteTask(id);
     }
 
     function handleEdit() {
