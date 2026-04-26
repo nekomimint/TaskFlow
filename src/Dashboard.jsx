@@ -16,7 +16,7 @@ import React from 'react'
 import { RadioGroup, Radio } from '@chakra-ui/react'
 import { Flex, Spacer } from '@chakra-ui/react'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
-import Column from './components/Column'
+import Column from './components/projects_components/Column'
 import ModalTask from "./components/tasks/ModalTask"
 import SideBar from "./components/SideBar"
 import { DragDropProvider } from '@dnd-kit/react';

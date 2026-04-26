@@ -4,7 +4,7 @@ import { Button } from "@chakra-ui/react"
 import { useDisclosure } from "@chakra-ui/react"
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
-import ModalProject from "./components/ModalProject"
+import ModalProject from "./components/projects_components/ModalProject"
 import { Avatar, AvatarBadge } from "@chakra-ui/react"
 export default function ProjectsViewer() {
     const { userId } = useParams();

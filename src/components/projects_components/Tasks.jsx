@@ -9,10 +9,10 @@ import { Box } from '@chakra-ui/react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { useDraggable } from '@dnd-kit/react';
 import { PhoneIcon, AddIcon, WarningIcon } from '@chakra-ui/icons'
-import AppIcon from "./AppIcon"
+import AppIcon from '../AppIcon';
 import './Tasks.css'
 import { Flex } from '@chakra-ui/react';
-import ButtonIcon from "./ButtonIcon"
+import ButtonIcon from '../ButtonIcon';
 // Iconos
 import { LuTrash2 } from "react-icons/lu"
 import { LuPencilLine } from "react-icons/lu";

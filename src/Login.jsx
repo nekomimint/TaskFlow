@@ -18,6 +18,7 @@ import { useDropzone } from 'react-dropzone'
 import { Flex } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import ChangeTheme from './components/mini_components/ChangeTheme'
 export default function Login() {
 
     const navigate = useNavigate()
@@ -143,6 +144,7 @@ export default function Login() {
 
 
                     <AnimatePresence mode="wait">
+
                         {createAccount ?
                             ( /* If true*/
                                 /* Create account */
@@ -158,7 +160,7 @@ export default function Login() {
                                         damping: 20
                                     }}
                                     className="createUser">
-
+                                    <ChangeTheme></ChangeTheme>
                                     <Stack direction={['column']} spacing='24px'>
                                         <Heading textAlign="Center" as="h2" size="md">Nueva cuenta</Heading>
                                         <Flex {...getRootProps()} className="avatarContainer">
@@ -213,7 +215,7 @@ export default function Login() {
                                         damping: 20
                                     }}
                                     className="userLogin">
-
+                                    <ChangeTheme></ChangeTheme>
                                     <Stack direction={['column']} spacing='24px'>
                                         <Heading textAlign="Center" as="h1" size="2xl">Task Flow</Heading>
                                         <Heading textAlign="Center" as="h2" size="md">Iniciar sesión</Heading>
