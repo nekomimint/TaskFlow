@@ -83,7 +83,28 @@ export default function Login() {
     const [userNameLogin, setUserNameLogin] = useState("")
     const [passwordLogin, setPasswordLogin] = useState("")
 
+    function handleLogin() {
+        const userFound = users.find(user =>
+            user.userName === userNameLogin &&
+            user.password === passwordLogin
+        )
 
+        if (userNameLogin == null || passwordLogin == null) {
+
+            return
+        }
+
+
+        if (!userFound) {
+
+            return
+        }
+
+        navigate(`/projects/${userFound.id}`)
+    }
+
+
+    //* Imagenes and preview
 
     const [preview, setPreview] = useState('/photos/defaultUser.png')
 
@@ -104,7 +125,6 @@ export default function Login() {
         reader.readAsDataURL(file)
     }, [])
 
-    // 2. Luego lo pasas al useDropzone
     const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
         onDrop,
         accept: { 'image/*': [] },
@@ -112,13 +132,7 @@ export default function Login() {
         maxSize: 1 * 1024 * 1024
     })
 
-
-
-    //* Guardar imagen
-
-
-
-
+    //* Avoid create account if null params
     const [createAccount, setCreateAccount] = useState(false)
     console.log(createAccount)
     return (
@@ -218,14 +232,14 @@ export default function Login() {
                                             <Button onClick={() => setCreateAccount(true)}>
                                                 Crear una cuenta
                                             </Button>
-                                            <Link to="/projects">
-                                                <Button className="loginButton"
-                                                    bg="#c7c3ff"
-                                                    _hover={{ bg: "#7b789b" }}
-                                                    _active={{ bg: "#47455c" }}
-                                                    _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
-                                                >Entrar</Button>
-                                            </Link>
+
+                                            <Button className="loginButton" onClick={handleLogin}
+                                                bg="#c7c3ff"
+                                                _hover={{ bg: "#7b789b" }}
+                                                _active={{ bg: "#47455c" }}
+                                                _focus={{ boxShadow: "0 0 0 2px #c7c3ff" }}
+                                            >Entrar</Button>
+
                                         </Center>
                                     </Stack>
 
