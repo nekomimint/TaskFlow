@@ -48,6 +48,7 @@ export default function Dashboard() {
         }
     }, [projectId]);
 
+<<<<<<< HEAD
         const handleEditTask = (idTask, newTitle, newDesc) => {
         const updatedTasks = tasks.map(task =>
             task.idTask === idTask
@@ -59,6 +60,8 @@ export default function Dashboard() {
         saveProject({ ...project, tasks: updatedTasks });
     };
 
+=======
+>>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
     const handleCreateTask = (newTask) => {
         const updatedProject = {
             ...project, //* Copiar el proyecto
@@ -218,7 +221,11 @@ export default function Dashboard() {
 
                                     <Flex className="listaTareas" >
                                         {COLUMNS.map((column) => {
+<<<<<<< HEAD
                                             return <Column key={column.id} column={column} tasks={tasks.filter(task => task.status === column.id)} onEditTask={handleEditTask} />
+=======
+                                            return <Column key={column.id} column={column} tasks={tasks.filter(task => task.status === column.id)} />
+>>>>>>> cdc6444f6c551d0398864191a90c052d4c711b82
                                         })}
                                     </Flex>
                                 </DragDropProvider>
