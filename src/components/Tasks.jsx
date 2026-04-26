@@ -16,6 +16,7 @@ import ButtonIcon from "./ButtonIcon"
 // Iconos
 import { LuTrash2 } from "react-icons/lu"
 import { LuPencilLine } from "react-icons/lu";
+import { useColorModeValue } from "@chakra-ui/react";
 
 
 export default function Tasks({ id, title, descripcion, status, onEditTask, onDeleteTask }) {
@@ -39,9 +40,19 @@ export default function Tasks({ id, title, descripcion, status, onEditTask, onDe
 
         onEditTask(id, newTitle, newDesc);
     }
+
+    const taskBg = useColorModeValue("gray.100", "gray.700");
+    const taskText = useColorModeValue("black", "white");
+
     return (
         <div ref={ref}  {...attributes}>
-            <AccordionItem className="accordionStyle" >
+            <AccordionItem className="accordionStyle"
+            style={{
+                backgroundColor: taskBg,
+                color: taskText,
+                borderRadius: "8px",
+                marginBottom: "10px"
+            }} >
                 <h2>
                     <div className="buttonHeader">
                         <AppIcon name="LuGrip" {...listeners} {...attributes} className="iconStyle" />

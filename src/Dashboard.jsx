@@ -105,20 +105,7 @@ export default function Dashboard() {
             return updated; //* Le decimos a React que actualice el estado
         });
     };
-    //* Borrar la tarea
-   /* const handleDeleteTask = (taskId) => {
-        const updatedProject = {
-            ...project, //* Copiamos todo el proyecto
-            tasks: tasks.filter(task =>  //* Recorremos todo el arreglo
-                task.id !== taskId  //* ¿NO es la tarea que queremos borrar?
-                //* Sí → se queda
-                //* No → se elimina, aqui entender que el si seria que no es la tarea a borrar, y el no seria negar el
-                //* no es la tarea, osea que si la queremos borrar, entonces esta no la añadimos a la nueva lista de tareas 
-            )
-        };
-        setTasks(updatedProject.tasks);
-        saveProject(updatedProject);
-    };*/
+  
     //* Funcion para cuando movemos las tareas actualizar su status no solo en pagina si no en JSON tambien
     const handleMoved = (taskId, newStatus) => {
         const updatedProject = {
