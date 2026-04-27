@@ -7,13 +7,13 @@ import {
     ModalCloseButton
 } from "@chakra-ui/react"
 import { useState } from 'react'
-function ModalProject({ isOpen, onClose, onCreateProject }) {
+function EditProjects({ isOpen, onClose, onEditProject }) {
     const [nameProject, setNameProject] = useState("")
 
     const [sharedUsers, setSharedUsers] = useState([])
-
+    const [dataProject, setDataProject] = useState([])
     const handleSubmit = () => {
-        const newProject = {
+        const dataUpdated = {
             idProject: crypto.randomUUID(),
             nameProject: nameProject,
             tasks: [{
@@ -24,7 +24,7 @@ function ModalProject({ isOpen, onClose, onCreateProject }) {
                 status: "PENDING"
             }]
         }
-        onCreateProject(newProject)
+        onEditProject(dataUpdated)
         onClose()
 
         // limpiar inputs
@@ -46,7 +46,7 @@ function ModalProject({ isOpen, onClose, onCreateProject }) {
                     />
 
                     <button onClick={handleSubmit}>
-                        Crear tarea
+                        Guardar
                     </button>
                 </ModalBody>
             </ModalContent>
@@ -54,4 +54,4 @@ function ModalProject({ isOpen, onClose, onCreateProject }) {
     )
 }
 
-export default ModalProject
+export default EditProjects

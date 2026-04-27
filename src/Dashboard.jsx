@@ -29,25 +29,32 @@ export default function Dashboard() {
     const [users, setUsers] = useState([]);
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
-
+    const [owner, setOwner] = useState(null)
     useEffect(() => {
         const data = localStorage.getItem("user");
         if (data) {
             const parsed = JSON.parse(data);
             setUsers(parsed);
 
-            // Todo en el mismo useEffect, ya tienes los datos aquí
-            const foundProject = parsed[0]?.projects?.find(
-                p => p.idProject === Number(projectId)
+            // variable local, disponible de inmediato
+            const foundOwner = parsed.find(user =>
+                user.projects.some(p => p.idProject === projectId)
             );
+            console.log("parsed:", parsed)
+            console.log("projectId:", projectId)
+            console.log("userId :", (foundOwner.id))
+            console.log("foundOwner:", foundOwner)
+            setOwner(foundOwner.id)  // para usarlo fuera del useEffect
 
-            if (foundProject) {
+            if (foundOwner) {
+                const foundProject = foundOwner.projects.find(
+                    p => p.idProject === (projectId)
+                );
                 setProject(foundProject);
                 setTasks(foundProject.tasks);
             }
         }
     }, [projectId]);
-
     const handleEditTask = (idTask, newTitle, newDesc) => {
         const updatedTasks = tasks.map(task =>
             task.idTask === idTask
@@ -142,7 +149,7 @@ export default function Dashboard() {
     ]
 
 
-
+    console.log(owner)
     return (
         <>
             {/* Contenido principal (no barra lateral) */}
@@ -152,13 +159,11 @@ export default function Dashboard() {
                 <Flex className="contenedorTareas">
                     <Box className="menuOpciones">
                         {/* //* Boton que abre la barra lateral */}
-                        <Button colorScheme='blue' onClick={drawer.onOpen}>
-                            Open
 
-                        </Button>
+
                         <SideBar
-                            isOpen={drawer.isOpen}
-                            onClose={drawer.onClose}
+                            context={"dashboard"}
+                            userId={owner}
                         />
                         {/* //* Boton para agregar nuevas tareas */}
                         <Button colorScheme='blue' onClick={modal.onOpen}>
@@ -172,9 +177,9 @@ export default function Dashboard() {
                                 projectId={projectId}
                             />
                         </Button>
-                        <div>
+                        {/* <div>
                             Current project: {projectId}
-                        </div>
+                        </div> */}
                     </Box>
                     <Tabs>
                         <TabList>

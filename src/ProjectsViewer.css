@@ -1,0 +1,25 @@
+.superContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.upperBar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+.projectsContainer {
+    background-color: aqua;
+    max-width: 80vw;
+    min-width: 80vw;
+    overflow-y: scroll;
+    max-height: 70vh;
+}
+
+.projectCard {
+    background-color: blueviolet;
+}
