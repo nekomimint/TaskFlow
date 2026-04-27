@@ -39,6 +39,7 @@ export default function Login() {
         setUsers(prev => {
             const updated = [...prev, newUser]  // agrega el usuario al arreglo
             localStorage.setItem("user", JSON.stringify(updated))
+
             return updated
         })
     }
@@ -50,9 +51,16 @@ export default function Login() {
         console.log("3. profilePhoto:", profilePhoto)
         if (!userName.trim() || !password.trim()) return  // validación básica
 
+        const exists = users.some(u => u.userName === userName)
+        if (exists) {
+            // setError("El nombre de usuario ya está en uso")
+            return
+        }
+
         const newUser = {
             id: crypto.randomUUID(),
             userName,
+            role: "normal",
             password,
             profilePhoto: profilePhoto,
             projects: [

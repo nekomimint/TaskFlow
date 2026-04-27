@@ -10,6 +10,7 @@ import AppIcon from "./components/AppIcon"
 import ButtonIcon from "./components/ButtonIcon"
 import "./ProjectsViewer.css"
 import { Heading } from '@chakra-ui/react'
+import EditProjects from "./components/projects_components/EditProjects"
 export default function ProjectsViewer() {
     const { userId } = useParams();
     const [users, setUsers] = useState([]);
@@ -75,6 +76,28 @@ export default function ProjectsViewer() {
         }))
     };
 
+    const handleEditProject = () => {
+
+    }
+
+    const handleDeleteProject = (idProject) => {
+        setUsers(prev => {
+            const updated = prev.map(user =>
+                user.id === userId
+                    ? { ...user, projects: user.projects.filter(p => p.idProject !== idProject) }
+                    : user
+            );
+            localStorage.setItem("user", JSON.stringify(updated));
+            return updated;
+        });
+
+        // actualiza la vista
+        setCurrentUser(prev => ({
+            ...prev,
+            projects: prev.projects.filter(p => p.idProject !== idProject)
+        }))
+    }
+
     // console.log("profilePhoto:", currentUser?.profilePhoto)
 
     return (
@@ -115,14 +138,18 @@ export default function ProjectsViewer() {
                             <Link to={`/dashboard/${project.idProject}`}>
                                 <Button>Go</Button>
                             </Link>
+
+                            <EditProjects
+                                handleEditProject={handleEditProject}
+                                actualProjectData={project}
+                            />
+
                             <ButtonIcon
                                 icon={<AppIcon name={"LuTrash2"} />}
                                 label="Borrar proyecto."
+                                onClick={() => handleDeleteProject(project.idProject)}
                             />
-                            <ButtonIcon
-                                icon={<AppIcon name={"LuPencilLine"} />}
-                                label="Borrar proyecto."
-                            />
+
                         </div>
                     ))}
                 </div>
@@ -135,7 +162,7 @@ export default function ProjectsViewer() {
                     isOpen={modal.isOpen}
                     onClose={modal.onClose}
                     onCreateProject={handleNewProjects}
-
+                    ownerName={currentUser && currentUser.userName}
                 />
             </Button>
 

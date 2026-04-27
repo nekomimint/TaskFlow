@@ -11,6 +11,7 @@ export default function App() {
     {
       id: 1,
       userName: "New User",
+      role: "normal",
       profilePhoto: null, // This can be null is user not upload photo and will passed as base64
       password: "DefaultPassword",
       projects: [ //* Todos los proyectos de los cuales el usuario es propietario
@@ -27,10 +28,16 @@ export default function App() {
             priority: "HIGH",
             usersAsigned: [], //* Todos los usuarios asignado a la tarea
           }],
-          sharedUsers: [] //* Todas los usuarios que participan en el proyecto, (UUID)
+          sharedUsers: [] //* Todas los usuarios que participan en el proyecto, (nombre)
         },
       ],
-      sharedProjects: [], //* Todos los proyectos compartidos con el usuario
+      sharedProjects: [
+        {
+          idProject: null,
+          tasksAssigned: []
+        }
+
+      ], //* Todos los proyectos compartidos con el usuario
     }
   ])
 
