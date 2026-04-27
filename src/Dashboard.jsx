@@ -1,0 +1,343 @@
+import './dashboard.css';
+import { useState } from 'react'
+import './App.css'
+import { Input } from '@chakra-ui/react'
+import { ChakraProvider, Button } from '@chakra-ui/react'
+import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
+import { Center, Square, Circle } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
+import { Stack } from '@chakra-ui/react'
+import { Heading } from '@chakra-ui/react'
+import { Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+
+import { useDisclosure } from '@chakra-ui/react'
+import React from 'react'
+import { RadioGroup, Radio } from '@chakra-ui/react'
+import { Flex, Spacer } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import Column from './components/projects_components/Column'
+import ModalTask from "./components/tasks/ModalTask"
+import SideBar from "./components/SideBar"
+import { DragDropProvider } from '@dnd-kit/react';
+import { useParams } from "react-router-dom";
+import { useEffect } from 'react';
+import { Progress } from "@chakra-ui/react";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+export default function Dashboard() {
+
+    const { projectId } = useParams();
+
+    const [users, setUsers] = useState([]);
+    const [project, setProject] = useState(null);
+    const [tasks, setTasks] = useState([]);
+    const [activity, setActivity] = useState([]);
+
+    const totalTasks = tasks.length;
+
+    const completedTasks = tasks.filter(
+        task => task.status === "DONE"
+    ).length;
+
+    const progress = totalTasks === 0 
+        ? 0 
+        : Math.round((completedTasks / totalTasks) * 100);
+
+    const pendingTasks = tasks.filter(
+        task => task.status !== "DONE"
+    ).length;
+
+    const pieData = [
+        { name: "Completadas", value: completedTasks },
+        { name: "Pendientes", value: pendingTasks }
+    ];
+
+    useEffect(() => {
+        const data = localStorage.getItem("user");
+        const savedActivity = localStorage.getItem("activity");
+        if (savedActivity) {
+            setActivity(JSON.parse(savedActivity));
+        }
+        if (data) {
+            const parsed = JSON.parse(data);
+            setUsers(parsed);
+
+            // Todo en el mismo useEffect, ya tienes los datos aquí
+            const foundProject = parsed[0]?.projects?.find(
+                p => p.idProject === Number(projectId)
+            );
+
+            if (foundProject) {
+                setProject(foundProject);
+                setTasks(foundProject.tasks);
+            }
+        }
+    }, [projectId]);
+
+    const handleEditTask = (idTask, newTitle, newDesc) => {
+        const updatedTasks = tasks.map(task =>
+            task.idTask === idTask
+                ? { ...task, nameTask: newTitle, description: newDesc }
+                : task
+        );
+
+        setTasks(updatedTasks);
+        saveProject({ ...project, tasks: updatedTasks });
+
+        addActivity(`Se editó la tarea "${newTitle}"`);
+    };
+
+    const handleDeleteTask = (taskId) => {
+        const updatedTasks = tasks.filter(task =>
+            task.idTask !== taskId
+        );
+
+        setTasks(updatedTasks);
+        saveProject({ ...project, tasks: updatedTasks });
+
+        const taskToDelete = tasks.find(t => t.idTask === taskId);
+        addActivity(`Se eliminó la tarea  "${taskToDelete.nameTask}"`);
+
+
+    };
+
+    const handleCreateTask = (newTask) => {
+        const updatedProject = {
+            ...project, //* Copiar el proyecto
+            tasks: [...tasks, newTask] //* Copiar todas las tareas mas la nueva
+        };
+        setTasks(updatedProject.tasks); //* Decirle a react que actualice el estado
+        saveProject(updatedProject); //* mandar el nuevo proyecto a guardar en JSON
+
+        addActivity(`Se creó la tarea "${newTask.nameTask}"`);
+    };
+    const handleUpdateTask = (updatedTask) => {
+        const updatedProject = {
+            ...project, //* Copiado de proyecto (copy)
+            tasks: tasks.map(task => //* Ciclo for para recorrer cada task
+                task.idTask === updatedTask.idTask  //* ¿Es la que queremos actualizar?
+                    ? updatedTask           //* Sí → la reemplaza, osea el updatedTask sustituye al task que este en el id
+                    : task                 //* No → la deja igual
+            )
+        };
+        setTasks(updatedProject.tasks);
+        saveProject(updatedProject); //* Esto es una funcion que hicimos para guardar el nuevo json generado en localstorage
+
+        const taskToUpdate = tasks.find(t => t.idTask === taskId);
+        addActivity(`Se actualizó la tarea "${updatedTask.nameTask}"`);
+        };
+        //* Guardar el proyecto en localstorage para no perder si recargamos
+        const saveProject = (updatedProject) => {
+        setProject(updatedProject);
+
+        setUsers(prev => {
+            const updated = prev.map(user => ({
+                ...user,
+                projects: user.projects.map(p =>
+                    p.idProject === updatedProject.idProject
+                        ? updatedProject
+                        : p
+                )
+            }));
+
+            localStorage.setItem("user", JSON.stringify(updated));
+            return updated;
+        });
+    };
+
+    //* Funcion para cuando movemos las tareas actualizar su status no solo en pagina si no en JSON tambien
+    const handleMoved = (taskId, newStatus) => {
+        const updatedProject = {
+            ...project,
+            tasks: tasks.map(task =>
+                task.idTask === taskId
+                    ? { ...task, status: newStatus }  // copia la task y reemplaza solo el status
+                    : task
+            )
+        };
+        setTasks(updatedProject.tasks);
+        saveProject(updatedProject);
+
+        const movedTask = tasks.find(t => t.idTask === taskId);
+        addActivity(`Se movió la tarea "${movedTask.nameTask}" a ${newStatus}`);
+    };
+
+    //* Unas constantes que usa chakra
+    const drawer = useDisclosure()
+
+    const modal = useDisclosure()
+
+
+    const COLUMNS = [
+        {
+            id: "PENDING",
+            title: "Pendiente"
+        },
+        {
+            id: "DOING",
+            title: "En progreso"
+        },
+        {
+            id: "DONE",
+            title: "Terminado"
+        }
+    ]
+
+    const addActivity = (message) => {
+        const newEntry = {
+            id: Date.now(),
+            message,
+            date: new Date().toLocaleString()
+        };
+
+        setActivity(prev => {
+        const updated = [newEntry, ...prev];
+            localStorage.setItem("activity", JSON.stringify(updated));
+            return updated;
+        });
+    };
+
+
+
+    return (
+        <>
+            {/* Contenido principal (no barra lateral) */}
+            <Box className="contenedorDashboard">
+                <div className="dashboardBG"></div>
+
+                <Flex className="contenedorTareas">
+                    <Box className="menuOpciones">
+                        {/* //* Boton que abre la barra lateral */}
+                        <Button colorScheme='blue' onClick={drawer.onOpen}>
+                            Open
+
+                        </Button>
+                        <SideBar
+                            isOpen={drawer.isOpen}
+                            onClose={drawer.onClose}
+                        />
+                        {/* //* Boton para agregar nuevas tareas */}
+                        <Button colorScheme='blue' onClick={modal.onOpen}>
+
+                            Nueva tarea
+
+                            <ModalTask
+                                isOpen={modal.isOpen}
+                                onClose={modal.onClose}
+                                onCreateTask={handleCreateTask}
+                                projectId={projectId}
+                            />
+                        </Button>
+                        <div>
+                            Current project: {projectId}
+                        </div>
+
+                        <Box mt={4}>
+                            <p>Progreso del proyecto: {progress}%</p>
+                            <Progress value={progress} colorScheme="green" />
+                        </Box>
+                    </Box>
+                    <Tabs>
+                        <TabList>
+                            <Tab>Tareas</Tab>
+                            <Tab>Resumen</Tab>
+                            <Tab>Three</Tab>
+                        </TabList>
+
+                        <TabPanels>
+                            <TabPanel>
+                                <DragDropProvider
+
+                                    onDragEnd={(event) => {
+                                        console.log(event);
+                                        console.log("EVENT:", event);
+                                        console.log("SOURCE:", event.operation.source);
+                                        console.log("TARGET:", event.operation.target);
+                                        if (event.canceled) return;
+
+                                        const taskId = event.operation.source?.id;
+                                        const newStatus = event.operation.target?.id;
+
+                                        if (!newStatus) return;
+
+                                        setTasks((prev) =>
+                                            prev.map((task) =>
+                                                task.idTask === taskId
+                                                    ? { ...task, status: newStatus }
+                                                    : task
+                                            )
+
+                                        );
+                                        handleMoved(taskId, newStatus);  // aquí
+                                    }
+                                    }
+                                >
+
+                                    <Flex className="listaTareas" >
+                                        {COLUMNS.map((column) => {
+                                            return <Column
+                                                key={column.id}
+                                                column={column}
+                                                tasks={tasks.filter(task => task.status === column.id)}
+                                                onEditTask={handleEditTask}
+                                                onDeleteTask={handleDeleteTask} />
+                                        })}
+                                    </Flex>
+                                </DragDropProvider>
+                            </TabPanel>
+                            <TabPanel>
+                                {/* actividad */}
+                                {activity.length === 0 ? (
+                                    <p>No hay actividad aún</p>
+                                ) : (
+                                    activity.map(item => (
+                                        <Box key={item.id} p={2} borderBottom="1px solid gray">
+                                        <strong>{item.message}</strong>
+                                        <br />
+                                        <small>{item.date}</small>
+                                        </Box>
+                                    ))
+                                )}
+
+                                <Box mt={4}>
+                                    <p>Resumen de tareas</p>
+
+                                    
+
+                                    <PieChart width={300} height={300}>
+                                        <Pie
+                                            data={pieData}
+                                            dataKey="value"
+                                            nameKey="name"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius={100}
+                                            label
+                                        >
+                                            <Cell fill="#4CAF50" /> {/* completadas */}
+                                            <Cell fill="#F44336" /> {/* pendientes */}
+                                        </Pie>
+
+                                        <Tooltip />
+                                        <Legend />
+                                    </PieChart>
+                                </Box>
+                            </TabPanel>
+                            <TabPanel>
+                                <p>Calendario</p>
+                            </TabPanel>
+                            <TabPanel>
+                                <p>three!</p>
+                            </TabPanel>
+                        </TabPanels>
+                    </Tabs>
+
+                </Flex>
+
+            </Box >
+
+            {/* //* Esto es la barra lateral */}
+
+        </>
+    )
+}
