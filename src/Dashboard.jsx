@@ -176,6 +176,26 @@ export default function Dashboard() {
         { name: "Pendientes", value: pendingTasks }
     ];
 
+    const projectSummary = users.flatMap(user =>
+        user.projects.map(project => {
+            const total = project.tasks.length;
+
+            const completed = project.tasks.filter(
+                t => t.status === "DONE"
+            ).length;
+
+            const pending = total - completed;
+
+            return {
+                id: project.idProject,
+                name: project.name || `Proyecto ${project.idProject}`,
+                total,
+                completed,
+                pending
+            };
+        })
+    );
+
     // actividad
     const addActivity = (message) => {
         const newEntry = {
@@ -285,6 +305,33 @@ export default function Dashboard() {
                             </TabPanel>
                             <TabPanel>
                                 <Flex gap={10} align="flex-start" wrap="wrap">
+
+                                    <Box mb={6}>
+                                        <p style={{ fontWeight: "bold" }}>Resumen general</p>
+
+                                        {projectSummary.length === 0 ? (
+                                            <p>No hay proyectos</p>
+                                        ) : (
+                                            
+                                            projectSummary.map(p => (
+                                                <Box 
+                                                    key={p.id} 
+                                                    p={3} 
+                                                    mb={2} 
+                                                    border="1px solid gray" 
+                                                    borderRadius="8px"
+                                                >
+                                                    <strong>{p.name}</strong>
+                                                    <br />
+                                                    Total tareas: {p.total}
+                                                    <br />
+                                                    ✅ Completadas: {p.completed}
+                                                    <br />
+                                                    ⏳ Pendientes: {p.pending}
+                                                </Box>
+                                            ))
+                                        )}
+                                    </Box>
 
                                     {/* GRÁFICA */}
                                     <Box>
