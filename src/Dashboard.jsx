@@ -178,7 +178,7 @@ export default function Dashboard() {
     ];
 
     const projectSummary = users.flatMap(user =>
-        user.projects.map(project => {
+        user.projects.map((project, index) => {
             const total = project.tasks.length;
 
             const completed = project.tasks.filter(
@@ -189,10 +189,13 @@ export default function Dashboard() {
 
             return {
                 id: project.idProject,
-                name: project.name || `Proyecto ${project.idProject}`,
+                name: project.name?.trim() 
+                    ? project.name 
+                    : `Proyecto ${index + 1}`,
                 total,
                 completed,
-                pending
+                pending,
+                ownerName: user.name || user.username || `Usuario ${user.id}` // 👈 AQUÍ
             };
         })
     );
@@ -329,6 +332,8 @@ export default function Dashboard() {
                                                      Completadas: {p.completed}
                                                     <br />
                                                      Pendientes: {p.pending}
+                                                     <br />
+                                                     {p.ownerName}
                                                 </Box>
                                             ))
                                         )}
