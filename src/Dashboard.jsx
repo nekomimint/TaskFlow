@@ -31,49 +31,33 @@ export default function Dashboard() {
     const [users, setUsers] = useState([]);
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
+    const [owner, setOwner] = useState(null)
     const [activity, setActivity] = useState([]);
-
-    const totalTasks = tasks.length;
-
-    const completedTasks = tasks.filter(
-        task => task.status === "DONE"
-    ).length;
-
-    const progress = totalTasks === 0 
-        ? 0 
-        : Math.round((completedTasks / totalTasks) * 100);
-
-    const pendingTasks = tasks.filter(
-        task => task.status !== "DONE"
-    ).length;
-
-    const pieData = [
-        { name: "Completadas", value: completedTasks },
-        { name: "Pendientes", value: pendingTasks }
-    ];
-
     useEffect(() => {
         const data = localStorage.getItem("user");
-        const savedActivity = localStorage.getItem("activity");
-        if (savedActivity) {
-            setActivity(JSON.parse(savedActivity));
-        }
         if (data) {
             const parsed = JSON.parse(data);
             setUsers(parsed);
 
-            // Todo en el mismo useEffect, ya tienes los datos aquí
-            const foundProject = parsed[0]?.projects?.find(
-                p => p.idProject === Number(projectId)
+            // variable local, disponible de inmediato
+            const foundOwner = parsed.find(user =>
+                user.projects.some(p => p.idProject === projectId)
             );
+            console.log("parsed:", parsed)
+            console.log("projectId:", projectId)
+            console.log("userId :", (foundOwner.id))
+            console.log("foundOwner:", foundOwner)
+            setOwner(foundOwner.id)  // para usarlo fuera del useEffect
 
-            if (foundProject) {
+            if (foundOwner) {
+                const foundProject = foundOwner.projects.find(
+                    p => p.idProject === (projectId)
+                );
                 setProject(foundProject);
                 setTasks(foundProject.tasks);
             }
         }
     }, [projectId]);
-
     const handleEditTask = (idTask, newTitle, newDesc) => {
         const updatedTasks = tasks.map(task =>
             task.idTask === idTask
@@ -83,8 +67,6 @@ export default function Dashboard() {
 
         setTasks(updatedTasks);
         saveProject({ ...project, tasks: updatedTasks });
-
-        addActivity(`Se editó la tarea "${newTitle}"`);
     };
 
     const handleDeleteTask = (taskId) => {
@@ -94,11 +76,8 @@ export default function Dashboard() {
 
         setTasks(updatedTasks);
         saveProject({ ...project, tasks: updatedTasks });
-
         const taskToDelete = tasks.find(t => t.idTask === taskId);
-        addActivity(`Se eliminó la tarea  "${taskToDelete.nameTask}"`);
-
-
+        addActivity(`Se eliminó la tarea "${taskToDelete?.nameTask}"`);
     };
 
     const handleCreateTask = (newTask) => {
@@ -108,7 +87,6 @@ export default function Dashboard() {
         };
         setTasks(updatedProject.tasks); //* Decirle a react que actualice el estado
         saveProject(updatedProject); //* mandar el nuevo proyecto a guardar en JSON
-
         addActivity(`Se creó la tarea "${newTask.nameTask}"`);
     };
     const handleUpdateTask = (updatedTask) => {
@@ -122,26 +100,22 @@ export default function Dashboard() {
         };
         setTasks(updatedProject.tasks);
         saveProject(updatedProject); //* Esto es una funcion que hicimos para guardar el nuevo json generado en localstorage
-
-        const taskToUpdate = tasks.find(t => t.idTask === taskId);
-        addActivity(`Se actualizó la tarea "${updatedTask.nameTask}"`);
-        };
-        //* Guardar el proyecto en localstorage para no perder si recargamos
-        const saveProject = (updatedProject) => {
-        setProject(updatedProject);
+    };
+    //* Guardar el proyecto en localstorage para no perder si recargamos
+    const saveProject = (updatedProject) => {
+        setProject(updatedProject);   //* Actualiza el estado de React (osea re-renderizar)
 
         setUsers(prev => {
             const updated = prev.map(user => ({
-                ...user,
-                projects: user.projects.map(p =>
+                ...user, //* Copiar todos los usuario (buena practica)
+                projects: user.projects.map(p => //* Recorremos todos los proyectos
                     p.idProject === updatedProject.idProject
-                        ? updatedProject
-                        : p
+                        ? updatedProject   //* encuentra el proyecto por id y lo reemplaza, esto es una triplete
+                        : p //* Si es el proyecto a actualizar lo cambiamos, si no lo dejamos como esta (siempre deberia ser true)
                 )
             }));
-
-            localStorage.setItem("user", JSON.stringify(updated));
-            return updated;
+            localStorage.setItem("user", JSON.stringify(updated));  //* Guardar en localStorage el nuevo objeto
+            return updated; //* Le decimos a React que actualice el estado
         });
     };
 
@@ -157,9 +131,8 @@ export default function Dashboard() {
         };
         setTasks(updatedProject.tasks);
         saveProject(updatedProject);
-
         const movedTask = tasks.find(t => t.idTask === taskId);
-        addActivity(`Se movió la tarea "${movedTask.nameTask}" a ${newStatus}`);
+        addActivity(`Se movió la tarea "${movedTask?.nameTask}" a ${newStatus}`);
     };
 
     //* Unas constantes que usa chakra
@@ -183,6 +156,27 @@ export default function Dashboard() {
         }
     ]
 
+    // progreso
+    const totalTasks = tasks.length;
+
+    const completedTasks = tasks.filter(
+        task => task.status === "DONE"
+    ).length;
+
+    const progress = totalTasks === 0 
+        ? 0 
+        : Math.round((completedTasks / totalTasks) * 100);
+
+    const pendingTasks = tasks.filter(
+        task => task.status !== "DONE"
+    ).length;
+
+    const pieData = [
+        { name: "Completadas", value: completedTasks },
+        { name: "Pendientes", value: pendingTasks }
+    ];
+
+    // actividad
     const addActivity = (message) => {
         const newEntry = {
             id: Date.now(),
@@ -191,7 +185,7 @@ export default function Dashboard() {
         };
 
         setActivity(prev => {
-        const updated = [newEntry, ...prev];
+            const updated = [newEntry, ...prev];
             localStorage.setItem("activity", JSON.stringify(updated));
             return updated;
         });
@@ -202,7 +196,7 @@ export default function Dashboard() {
     };
 
 
-
+    console.log(owner)
     return (
         <>
             {/* Contenido principal (no barra lateral) */}
@@ -212,13 +206,11 @@ export default function Dashboard() {
                 <Flex className="contenedorTareas">
                     <Box className="menuOpciones">
                         {/* //* Boton que abre la barra lateral */}
-                        <Button colorScheme='blue' onClick={drawer.onOpen}>
-                            Open
 
-                        </Button>
+
                         <SideBar
-                            isOpen={drawer.isOpen}
-                            onClose={drawer.onClose}
+                            context={"dashboard"}
+                            userId={owner}
                         />
                         {/* //* Boton para agregar nuevas tareas */}
                         <Button colorScheme='blue' onClick={modal.onOpen}>
@@ -232,10 +224,6 @@ export default function Dashboard() {
                                 projectId={projectId}
                             />
                         </Button>
-                        <div>
-                            Current project: {projectId}
-                        </div>
-
                         <Box mt={4}>
                             <p>Progreso del proyecto: {progress}%</p>
                             <Progress value={progress} colorScheme="green" />
@@ -290,9 +278,11 @@ export default function Dashboard() {
                                 </DragDropProvider>
                             </TabPanel>
                             <TabPanel>
+                                <p>Calendario</p>
+                            </TabPanel>
+                            <TabPanel>
                                 <Flex gap={10} align="flex-start" wrap="wrap">
-                                <Flex gap={10} wrap="wrap"></Flex>
-                                <Box minW="320px"></Box>
+
                                     {/* GRÁFICA */}
                                     <Box>
                                         <p>Resumen de tareas</p>
@@ -337,9 +327,6 @@ export default function Dashboard() {
                                     </Box>
 
                                 </Flex>
-                            </TabPanel>
-                            <TabPanel>
-                                <p>Calendario</p>
                             </TabPanel>
                             <TabPanel>
                                 <p>three!</p>

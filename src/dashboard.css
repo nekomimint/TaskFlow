@@ -1,7 +1,7 @@
 .menuOpciones {
     display: flex;
     flex-direction: column;
-    background-color: aqua;
+    /* background-color: aqua; */
     min-width: 0;
     min-height: 0;
     gap: 2%;
@@ -25,13 +25,14 @@
     min-width: 100vw;
     min-height: 100vh;
     gap: 2%;
-    background-color: #FF00FF;
+    /* background-color: #FF00FF; */
 }
 
 .listaTareas {
     display: flex;
     flex-direction: row;
-    background-color: blue;
+    /* background-color: blue; */
+
     padding: 1%;
     gap: 2%;
     min-width: 75vw;

@@ -6,6 +6,11 @@ import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import ModalProject from "./components/projects_components/ModalProject"
 import { Avatar, AvatarBadge } from "@chakra-ui/react"
+import AppIcon from "./components/AppIcon"
+import ButtonIcon from "./components/ButtonIcon"
+import "./ProjectsViewer.css"
+import { Heading } from '@chakra-ui/react'
+import EditProjects from "./components/projects_components/EditProjects"
 export default function ProjectsViewer() {
     const { userId } = useParams();
     const [users, setUsers] = useState([]);
@@ -56,41 +61,95 @@ export default function ProjectsViewer() {
     const handleNewProjects = (newProject) => {
         setUsers(prev => {
             const updated = prev.map(user =>
-                user.id === userId  // solo el usuario actual
+                user.id === userId
                     ? { ...user, projects: [...user.projects, newProject] }
                     : user
             );
             localStorage.setItem("user", JSON.stringify(updated));
             return updated;
         });
+
+        // actualiza currentUser para que la vista reaccione
+        setCurrentUser(prev => ({
+            ...prev,
+            projects: [...prev.projects, newProject]
+        }))
     };
 
-    console.log("profilePhoto:", currentUser?.profilePhoto)
+    const handleEditProject = () => {
+
+    }
+
+    const handleDeleteProject = (idProject) => {
+        setUsers(prev => {
+            const updated = prev.map(user =>
+                user.id === userId
+                    ? { ...user, projects: user.projects.filter(p => p.idProject !== idProject) }
+                    : user
+            );
+            localStorage.setItem("user", JSON.stringify(updated));
+            return updated;
+        });
+
+        // actualiza la vista
+        setCurrentUser(prev => ({
+            ...prev,
+            projects: prev.projects.filter(p => p.idProject !== idProject)
+        }))
+    }
+
+    // console.log("profilePhoto:", currentUser?.profilePhoto)
 
     return (
-        <>
 
-            <Avatar
-                src={currentUser?.profilePhoto ?? undefined}
-                size="xl"
-            >
-                <AvatarBadge boxSize='1em' bg='#c7c3ff' />
-            </Avatar>
+
+
+        <div className="superContainer">
+
+            <div className="upperBar">
+
+                <div className="spacer" />
+
+                <SideBar
+                    context={"projects"}
+                />
+
+                <Heading>Proyectos</Heading>
+
+
+
+                <Avatar
+                    src={currentUser?.profilePhoto ?? undefined}
+                    size="xl"
+                >
+                    <AvatarBadge boxSize='1em' bg='#c7c3ff' />
+                </Avatar>
+            </div>
+
+
+
             {currentUser && (
-                <div key={currentUser.id}>
+                <div key={currentUser.id} className="projectsContainer">
                     <h2>{currentUser.userName}</h2>
 
                     {currentUser.projects.map(project => (
-                        <div key={project.idProject}>
+                        <div key={project.idProject} className="projectCard">
                             <h3>{project.nameProject}</h3>
                             <Link to={`/dashboard/${project.idProject}`}>
                                 <Button>Go</Button>
                             </Link>
-                            {project.tasks.map(task => (
-                                <p key={task.idTask}>
-                                    {task.nameTask} - {task.status}
-                                </p>
-                            ))}
+
+                            <EditProjects
+                                handleEditProject={handleEditProject}
+                                actualProjectData={project}
+                            />
+
+                            <ButtonIcon
+                                icon={<AppIcon name={"LuTrash2"} />}
+                                label="Borrar proyecto."
+                                onClick={() => handleDeleteProject(project.idProject)}
+                            />
+
                         </div>
                     ))}
                 </div>
@@ -103,19 +162,13 @@ export default function ProjectsViewer() {
                     isOpen={modal.isOpen}
                     onClose={modal.onClose}
                     onCreateProject={handleNewProjects}
-
+                    ownerName={currentUser && currentUser.userName}
                 />
             </Button>
 
-            <Button colorScheme='blue' onClick={drawer.onOpen}>
-                Drawer
 
-            </Button>
-            <SideBar
-                isOpen={drawer.isOpen}
-                onClose={drawer.onClose}
-            />
 
-        </>
+
+        </div>
     )
 }
