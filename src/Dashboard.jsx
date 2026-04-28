@@ -191,8 +191,11 @@ export default function Dashboard() {
         });
     };
 
-    const renderLabel = ({ percent }) => {
-        return `${(percent * 100).toFixed(0)}%`;
+    const renderLabel = ({ name, value }) => {
+        const total = totalTasks || 1; // evitar división por 0
+        const percentage = Math.round((value / total) * 100);
+
+        return `${percentage}%`;
     };
 
 
