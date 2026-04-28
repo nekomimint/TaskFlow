@@ -85,7 +85,7 @@ export default function Tasks({ id, title, descripcion, status, dueDate, onEditT
                         </div>
                         {dueDate && (
                             <small style={{ marginTop: "5px", opacity: 0.7 }}>
-                                 {new Date(dueDate).toLocaleDateString()}
+                                {new Date(dueDate).toLocaleDateString()}
                             </small>
                         )}
                     </Flex>
