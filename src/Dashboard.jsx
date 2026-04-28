@@ -10,7 +10,7 @@ import { Stack } from '@chakra-ui/react'
 import { Heading } from '@chakra-ui/react'
 import { Link } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-
+import CalendarView from "./components/tasks/CalendarView";
 import { useDisclosure } from '@chakra-ui/react'
 import React from 'react'
 import { RadioGroup, Radio } from '@chakra-ui/react'
@@ -302,7 +302,7 @@ export default function Dashboard() {
                                 </DragDropProvider>
                             </TabPanel>
                             <TabPanel>
-                                <p>Calendario</p>
+                                <CalendarView tasks={tasks}/>
                             </TabPanel>
                             <TabPanel>
                                 <Flex gap={10} align="flex-start" wrap="wrap">
