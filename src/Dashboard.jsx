@@ -10,11 +10,10 @@ import { Stack } from '@chakra-ui/react'
 import { Heading } from '@chakra-ui/react'
 import { Link } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-<<<<<<< HEAD
+
 import { useDraggable } from '@dnd-kit/react';
-=======
+
 import CalendarView from "./components/tasks/CalendarView";
->>>>>>> 1bf2628ff3a12198e4f73080f0bf31026f6f2423
 import { useDisclosure } from '@chakra-ui/react'
 import React from 'react'
 import { RadioGroup, Radio } from '@chakra-ui/react'
@@ -307,13 +306,13 @@ export default function Dashboard() {
                                                 }
                                                 onEditTask={handleEditTask}
                                                 onDeleteTask={handleDeleteTask}
-                                              />
+                                            />
                                         })}
                                     </Flex>
                                 </DragDropProvider>
                             </TabPanel>
                             <TabPanel>
-                                <CalendarView tasks={tasks}/>
+                                <CalendarView tasks={tasks} />
                             </TabPanel>
                             <TabPanel>
                                 <Flex gap={10} align="flex-start" wrap="wrap">

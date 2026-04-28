@@ -18,17 +18,14 @@ import { LuTrash2, LuPencilLine } from "react-icons/lu"
 // Aquí definimos los colores para que se vea rápido qué tan urgente es cada tarea
 // Usamos los mismos que acordamos: Rojo (alta), Naranja (media) y Verde (baja)
 const priorityColors = {
-    high: "#E53E3E",   
-    medium: "#DD6B20", 
-    low: "#38A169"     
+    high: "#E53E3E",
+    medium: "#DD6B20",
+    low: "#38A169"
 };
 
-<<<<<<< HEAD
-export default function Tasks({ id, title, descripcion, status, dueDate, onEditTask, onDeleteTask }) {
-=======
 // Le pasamos 'priority' como prop para que la tarjeta sepa de qué color pintarse
-export default function Tasks({ id, title, descripcion, status, priority, onEditTask, onDeleteTask }) {
->>>>>>> 1bf2628ff3a12198e4f73080f0bf31026f6f2423
+export default function Tasks({ id, title, descripcion, dueDate, status, priority, onEditTask, onDeleteTask }) {
+
     const { ref, listeners, attributes } = useDraggable({
         id: id,
         type: "task"
@@ -60,7 +57,7 @@ export default function Tasks({ id, title, descripcion, status, priority, onEdit
 
     return (
         <div ref={ref} {...attributes}>
-            <AccordionItem 
+            <AccordionItem
                 className="accordionStyle"
                 style={{
                     backgroundColor: taskBg,
@@ -70,7 +67,7 @@ export default function Tasks({ id, title, descripcion, status, priority, onEdit
                     // Esta es la parte visual clave: le ponemos una franja de color a la izquierda 
                     // según la prioridad elegida en el Modal
                     borderLeft: `8px solid ${priorityColors[priority] || "#CBD5E0"}`
-                }} 
+                }}
             >
                 <h2>
                     <div className="buttonHeader">
@@ -89,7 +86,7 @@ export default function Tasks({ id, title, descripcion, status, priority, onEdit
                         <Box mb={3}>
                             {descripcion}
                         </Box>
-                        
+
                         {/* Botones de acción para borrar o editar, pegaditos a la derecha */}
                         <Flex className="optionIcons" justify="flex-end" gap={2}>
                             <ButtonIcon
@@ -102,19 +99,19 @@ export default function Tasks({ id, title, descripcion, status, priority, onEdit
                                 label="Editar tarea"
                                 onClick={handleEdit}
                             />
-<<<<<<< HEAD
-                        </div>
-                        {dueDate && (
-                            <small style={{ marginTop: "5px", opacity: 0.7 }}>
-                                {new Date(dueDate).toLocaleDateString()}
-                            </small>
-                        )}
-=======
+
+                            {dueDate && (
+                                <small style={{ marginTop: "5px", opacity: 0.7 }}>
+                                    {new Date(dueDate).toLocaleDateString()}
+                                </small>
+                            )
+                            }
+
                         </Flex>
->>>>>>> 1bf2628ff3a12198e4f73080f0bf31026f6f2423
-                    </Flex>
-                </AccordionPanel>
-            </AccordionItem>
-        </div>
+
+                    </Flex >
+                </AccordionPanel >
+            </AccordionItem >
+        </div >
     )
 }

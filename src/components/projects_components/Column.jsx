@@ -35,11 +35,8 @@ export default function Column({ column, tasks, onEditTask, onDeleteTask }) {
                             title={tarea.nameTask}
                             descripcion={tarea.description}
                             status={tarea.status}
-<<<<<<< HEAD
                             dueDate={tarea.dueDate}
-=======
                             priority={tarea.priority}
->>>>>>> 1bf2628ff3a12198e4f73080f0bf31026f6f2423
                             onEditTask={onEditTask}
                             onDeleteTask={onDeleteTask}
                         />

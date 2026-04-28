@@ -23,10 +23,6 @@
     "react-dropzone": "^15.0.0",
     "react-icons": "^5.6.0",
     "react-router-dom": "^7.14.0",
-<<<<<<< HEAD
-    "rechart": "^0.0.1",
-=======
->>>>>>> 1bf2628ff3a12198e4f73080f0bf31026f6f2423
     "recharts": "^3.8.1"
   },
   "devDependencies": {

@@ -13,7 +13,7 @@ import { useState } from 'react'
 function ModalTask({ isOpen, onClose, onCreateTask }) {
     const [nameTask, setNameTask] = useState("")
     const [description, setDescription] = useState("")
-    const [fecha, setFecha] = useState("")
+    const [dueDate, setDueDate] = useState("")
     const [priority, setPriority] = useState("low") // NUEVO: Estado para la prioridad (baja por defecto)
 
     const handleSubmit = () => {
@@ -21,7 +21,7 @@ function ModalTask({ isOpen, onClose, onCreateTask }) {
             idTask: crypto.randomUUID(),
             nameTask,
             description,
-            deadLine: fecha,
+            deadLine: dueDate,
             status: "PENDING",
             priority: priority // NUEVO: Se incluye la prioridad en el objeto de la tarea
         }
@@ -32,7 +32,7 @@ function ModalTask({ isOpen, onClose, onCreateTask }) {
         // limpiar inputs
         setNameTask("")
         setDescription("")
-        setFecha("")
+        setDueDate("")
         setPriority("low") // NUEVO: Limpiamos también la prioridad
     }
 
@@ -67,6 +67,7 @@ function ModalTask({ isOpen, onClose, onCreateTask }) {
                     <label style={{ marginTop: "10px", display: "block" }}>Prioridad:</label>
                     <Select
                         value={priority}
+
                         onChange={(e) => setPriority(e.target.value)}
                     >
                         <option value="low">Baja</option>
