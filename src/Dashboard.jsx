@@ -197,6 +197,10 @@ export default function Dashboard() {
         });
     };
 
+    const renderLabel = ({ percent }) => {
+        return `${(percent * 100).toFixed(0)}%`;
+    };
+
 
 
     return (
@@ -286,42 +290,53 @@ export default function Dashboard() {
                                 </DragDropProvider>
                             </TabPanel>
                             <TabPanel>
-                                {/* actividad */}
-                                {activity.length === 0 ? (
-                                    <p>No hay actividad aún</p>
-                                ) : (
-                                    activity.map(item => (
-                                        <Box key={item.id} p={2} borderBottom="1px solid gray">
-                                        <strong>{item.message}</strong>
-                                        <br />
-                                        <small>{item.date}</small>
-                                        </Box>
-                                    ))
-                                )}
+                                <Flex gap={10} align="flex-start" wrap="wrap">
+                                <Flex gap={10} wrap="wrap"></Flex>
+                                <Box minW="320px"></Box>
+                                    {/* GRÁFICA */}
+                                    <Box>
+                                        <p>Resumen de tareas</p>
 
-                                <Box mt={4}>
-                                    <p>Resumen de tareas</p>
+                                        {tasks.length === 0 ? (
+                                            <p>No hay tareas</p>
+                                        ) : (
+                                            <PieChart width={300} height={300}>
+                                                <Pie
+                                                    data={pieData}
+                                                    dataKey="value"
+                                                    nameKey="name"
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    outerRadius={100}
+                                                    label={renderLabel}
+                                                >
+                                                    <Cell fill="#4CAF50" />
+                                                    <Cell fill="#F44336" />
+                                                </Pie>
+                                                <Tooltip />
+                                                <Legend />
+                                            </PieChart>
+                                        )}
+                                    </Box>
 
-                                    
+                                    {/* HISTORIAL */}
+                                    <Box flex="1">
+                                        <p>Actividad reciente</p>
 
-                                    <PieChart width={300} height={300}>
-                                        <Pie
-                                            data={pieData}
-                                            dataKey="value"
-                                            nameKey="name"
-                                            cx="50%"
-                                            cy="50%"
-                                            outerRadius={100}
-                                            label
-                                        >
-                                            <Cell fill="#4CAF50" /> {/* completadas */}
-                                            <Cell fill="#F44336" /> {/* pendientes */}
-                                        </Pie>
+                                        {activity.length === 0 ? (
+                                            <p>No hay actividad aún</p>
+                                        ) : (
+                                            activity.map(item => (
+                                                <Box key={item.id} p={2} borderBottom="1px solid gray">
+                                                    <strong>{item.message}</strong>
+                                                    <br />
+                                                    <small>{item.date}</small>
+                                                </Box>
+                                            ))
+                                        )}
+                                    </Box>
 
-                                        <Tooltip />
-                                        <Legend />
-                                    </PieChart>
-                                </Box>
+                                </Flex>
                             </TabPanel>
                             <TabPanel>
                                 <p>Calendario</p>
