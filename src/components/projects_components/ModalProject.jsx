@@ -45,6 +45,11 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
     }
 
     const handleSubmit = () => {
+
+        const sharedUserIds = sharedUsers.map(name =>
+            allUsers.find(u => u.userName === name)?.id
+        ).filter(Boolean)  // elimina los undefined por si acaso
+
         const newProject = {
             idProject: crypto.randomUUID(),
             nameProject: nameProject,
@@ -57,7 +62,7 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
                 priority: "HIGH",
                 usersAsigned: [], //* Todos los usuarios asignado a la tarea
             }],
-            sharedUsers: sharedUsers //* Todas los usuarios que participan en el proyecto, (UUID)
+            sharedUsers: sharedUserIds //* Todas los usuarios que participan en el proyecto, (UUID)
 
         }
         onCreateProject(newProject)
@@ -66,7 +71,7 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
         // limpiar inputs
         setNameProject("")
     }
-    console.log(sharedUsers)
+    // console.log(sharedUsers)
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />

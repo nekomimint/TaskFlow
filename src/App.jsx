@@ -33,6 +33,7 @@ export default function App() {
       ],
       sharedProjects: [
         {
+          ownerId: null,
           idProject: null,
           tasksAssigned: []
         }
@@ -59,7 +60,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard/:projectId" element={<Dashboard />} />
+        <Route path="/dashboard/:userId/:projectId" element={<Dashboard />} />
         <Route path="/projects/:userId" element={<ProjectsViewer />} />
       </Routes>
 

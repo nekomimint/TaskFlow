@@ -24,7 +24,7 @@ import { useParams } from "react-router-dom";
 import { useEffect } from 'react';
 export default function Dashboard() {
 
-    const { projectId } = useParams();
+    const { userId, projectId } = useParams();
 
     const [users, setUsers] = useState([]);
     const [project, setProject] = useState(null);
@@ -163,7 +163,7 @@ export default function Dashboard() {
 
                         <SideBar
                             context={"dashboard"}
-                            userId={owner}
+                            userId={userId}
                         />
                         {/* //* Boton para agregar nuevas tareas */}
                         <Button colorScheme='blue' onClick={modal.onOpen}>

@@ -60,16 +60,32 @@ export default function ProjectsViewer() {
     }
     const handleNewProjects = (newProject) => {
         setUsers(prev => {
-            const updated = prev.map(user =>
-                user.id === userId
-                    ? { ...user, projects: [...user.projects, newProject] }
-                    : user
-            );
+            const updated = prev.map(user => {
+                // Al dueño le agrega el proyecto
+                if (user.id === userId) {
+                    return { ...user, projects: [...user.projects, newProject] }
+                }
+                // A los invitados les agrega la referencia
+                if (newProject.sharedUsers?.includes(user.id)) {
+                    return {
+                        ...user,
+                        sharedProjects: [
+                            ...(user.sharedProjects ?? []),
+                            {
+                                idProject: newProject.idProject,
+                                ownerId: userId,  // quién es el dueño
+                                tasksAssigned: []
+                            }
+                        ]
+                    }
+                }
+                // A los demás los deja igual
+                return user
+            });
             localStorage.setItem("user", JSON.stringify(updated));
             return updated;
         });
 
-        // actualiza currentUser para que la vista reaccione
         setCurrentUser(prev => ({
             ...prev,
             projects: [...prev.projects, newProject]
@@ -80,26 +96,10 @@ export default function ProjectsViewer() {
 
     }
 
-    const handleDeleteProject = (idProject) => {
-        setUsers(prev => {
-            const updated = prev.map(user =>
-                user.id === userId
-                    ? { ...user, projects: user.projects.filter(p => p.idProject !== idProject) }
-                    : user
-            );
-            localStorage.setItem("user", JSON.stringify(updated));
-            return updated;
-        });
 
-        // actualiza la vista
-        setCurrentUser(prev => ({
-            ...prev,
-            projects: prev.projects.filter(p => p.idProject !== idProject)
-        }))
-    }
 
     // console.log("profilePhoto:", currentUser?.profilePhoto)
-
+    console.log("Datos actuale", currentUser)
     return (
 
 
@@ -126,7 +126,7 @@ export default function ProjectsViewer() {
                 </Avatar>
             </div>
 
-
+            {/* Aqui van los proyectos propios */}
 
             {currentUser && (
                 <div key={currentUser.id} className="projectsContainer">
@@ -135,7 +135,7 @@ export default function ProjectsViewer() {
                     {currentUser.projects.map(project => (
                         <div key={project.idProject} className="projectCard">
                             <h3>{project.nameProject}</h3>
-                            <Link to={`/dashboard/${project.idProject}`}>
+                            <Link to={`/dashboard/${userId}/${project.idProject}`}>
                                 <Button>Go</Button>
                             </Link>
 
@@ -154,6 +154,32 @@ export default function ProjectsViewer() {
                     ))}
                 </div>
             )}
+
+            {/* Aqui va lo que es sharedProjects */}
+            <h2>Compartidos conmigo</h2>
+            {currentUser && currentUser.sharedProjects?.map(shared => {
+                console.log("Users actualmente ", users)
+                console.log("Compartido actualmente ", shared)
+                // Busca al dueño directamente por ownerId
+                console.log("shared:", shared)
+                console.log("ownerId:", shared.ownerId)
+                console.log("users:", users)
+                const owner = users.find(u => u.id === shared.ownerId)
+                console.log("owner:", owner)
+                const project = owner?.projects.find(p => p.idProject === shared.idProject)
+                console.log("Proyectos encontrados: ", project)
+                if (!project) return null
+
+                return (
+                    <div key={shared.idProject} className="projectCard">
+                        <h3>{project.nameProject}</h3>
+                        <p>De: {owner.userName}</p>
+                        <Link to={`/dashboard/${userId}/${project.idProject}`}>
+                            <Button>Go</Button>
+                        </Link>
+                    </div>
+                )
+            })}
 
             <Button onClick={modal.onOpen}>
                 New project
