@@ -11,6 +11,15 @@ import { Flex } from "@chakra-ui/react"
 import { Button } from "@chakra-ui/react"
 import { Text } from "@chakra-ui/react"
 import { useEffect } from "react"
+import {
+    Tag,
+    TagLabel,
+    TagLeftIcon,
+    TagRightIcon,
+    TagCloseButton,
+} from '@chakra-ui/react'
+import AppIcon from "../AppIcon"
+import ButtonIcon from "../ButtonIcon"
 function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
     const [nameProject, setNameProject] = useState("")
 
@@ -37,7 +46,8 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
         }
 
         setSharedUsers(prev => [...prev, newUser])
-        setNameNewUser("")  // limpia el input
+        console.log("limpiar")
+        setNameNewUser("")
     }
 
     const handleDeleteUser = (user) => {
@@ -49,6 +59,8 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
         const sharedUserIds = sharedUsers.map(name =>
             allUsers.find(u => u.userName === name)?.id
         ).filter(Boolean)  // elimina los undefined por si acaso
+
+
 
         const newProject = {
             idProject: crypto.randomUUID(),
@@ -65,13 +77,16 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
             sharedUsers: sharedUserIds //* Todas los usuarios que participan en el proyecto, (UUID)
 
         }
+
         onCreateProject(newProject)
         onClose()
 
         // limpiar inputs
         setNameProject("")
     }
-    // console.log(sharedUsers)
+
+
+    console.log(sharedUsers)
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -91,7 +106,8 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
                         <input
                             type="text"
                             placeholder="Nombre de usuario"
-                            onChange={(e) => setNameNewUser(e.target.value)}
+                            value={nameNewUser}
+                            onChange={e => setNameNewUser(e.target.value)}
                         />
                         <Button onClick={() => handleMultipleUsers(nameNewUser)}>
                             Agregar usuario
@@ -99,7 +115,17 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
                     </Flex>
                     <Text>Usuarios compartidos</Text>
                     {(sharedUsers ?? []).map(user => (
-                        <Text key={user}>{user}</Text>
+                        <div key={user}>
+                            <ButtonIcon
+                                icon={<AppIcon name="LuX" />}
+                                label="Borrar proyecto"
+                                onClick={() => handleDeleteUser(user)}
+                            />
+                            <Tag >
+
+                                {user}</Tag>
+                        </div>
+
                     ))}
 
 

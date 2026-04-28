@@ -6,6 +6,7 @@ import { LuMoon } from "react-icons/lu";
 import { LuSunDim } from "react-icons/lu";
 import { LuChevronFirst } from "react-icons/lu";
 import { LuChevronLast } from "react-icons/lu";
+import { LuX } from "react-icons/lu";
 const iconMap = {
     LuGrip,
     LuPencilLine,
@@ -14,6 +15,7 @@ const iconMap = {
     LuSunDim,
     LuChevronFirst,
     LuChevronLast,
+    LuX,
     // agrega los que necesites...
 };
 

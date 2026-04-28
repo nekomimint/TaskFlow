@@ -11,6 +11,7 @@ import ButtonIcon from "./components/ButtonIcon"
 import "./ProjectsViewer.css"
 import { Heading } from '@chakra-ui/react'
 import EditProjects from "./components/projects_components/EditProjects"
+import DeleteProject from "./components/projects_components/DeleteProjects"
 export default function ProjectsViewer() {
     const { userId } = useParams();
     const [users, setUsers] = useState([]);
@@ -91,6 +92,30 @@ export default function ProjectsViewer() {
             projects: [...prev.projects, newProject]
         }))
     };
+    const handleDeleteProject = (idProject) => {
+        setUsers(prev => {
+            const updated = prev.map(user => {
+                // Al dueño le elimina el proyecto
+                if (user.id === userId) {
+                    return { ...user, projects: user.projects.filter(p => p.idProject !== idProject) }
+                }
+                // A los invitados les elimina la referencia
+                return {
+                    ...user,
+                    sharedProjects: user.sharedProjects?.filter(
+                        sp => sp.idProject !== idProject
+                    ) ?? []
+                }
+            });
+            localStorage.setItem("user", JSON.stringify(updated));
+            return updated;
+        });
+
+        setCurrentUser(prev => ({
+            ...prev,
+            projects: prev.projects.filter(p => p.idProject !== idProject)
+        }))
+    }
 
     const handleEditProject = () => {
 
@@ -144,10 +169,9 @@ export default function ProjectsViewer() {
                                 actualProjectData={project}
                             />
 
-                            <ButtonIcon
-                                icon={<AppIcon name={"LuTrash2"} />}
-                                label="Borrar proyecto."
-                                onClick={() => handleDeleteProject(project.idProject)}
+                            <DeleteProject
+                                onDelete={handleDeleteProject}
+                                idProject={project.idProject}
                             />
 
                         </div>

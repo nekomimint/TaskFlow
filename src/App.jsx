@@ -9,7 +9,7 @@ export default function App() {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0])
   const dataUser = ([
     {
-      id: 1,
+      id: crypto.randomUUID(),
       userName: "New User",
       role: "normal",
       profilePhoto: null, // This can be null is user not upload photo and will passed as base64
@@ -17,7 +17,7 @@ export default function App() {
       projects: [ //* Todos los proyectos de los cuales el usuario es propietario
         // Project base
         {
-          idProject: 1,
+          idProject: crypto.randomUUID(),
           nameProject: "New Project",
           tasks: [{
             idTask: crypto.randomUUID(),
@@ -47,10 +47,10 @@ export default function App() {
   }
   const [projects, setProjects] = React.useState([
     {
-      id: 1,
+      id: crypto.randomUUID(),
       info: { title: "Alpha", desc: "...", color: "#fff" },
       tasks: [
-        { id: 1, title: "Tarea", desc: "...", status: "todo" }
+        { id: crypto.randomUUID(), title: "Tarea", desc: "...", status: "todo" }
       ]
     }
   ])

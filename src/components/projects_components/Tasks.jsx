@@ -22,6 +22,7 @@ import { useColorModeValue } from "@chakra-ui/react";
 export default function Tasks({ id, title, descripcion, status, onEditTask, onDeleteTask }) {
     const { ref, listeners, attributes } = useDraggable({
         id: id,
+        type: "task"
     });
 
     function handleDelete() {

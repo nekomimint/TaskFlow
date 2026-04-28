@@ -10,7 +10,7 @@ import { Stack } from '@chakra-ui/react'
 import { Heading } from '@chakra-ui/react'
 import { Link } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-
+import { useDraggable } from '@dnd-kit/react';
 import { useDisclosure } from '@chakra-ui/react'
 import React from 'react'
 import { RadioGroup, Radio } from '@chakra-ui/react'
@@ -43,6 +43,9 @@ export default function Dashboard() {
             const foundOwner = parsed.find(user =>
                 user.projects.some(p => p.idProject === projectId)
             );
+            console.log("foundOwner:", foundOwner)  // ¿es undefined?
+            console.log("projectId:", projectId, typeof projectId)
+            console.log("idProjects en JSON:", parsed.flatMap(u => u.projects.map(p => ({ id: p.idProject, tipo: typeof p.idProject }))))
             console.log("parsed:", parsed)
             console.log("projectId:", projectId)
             console.log("userId :", (foundOwner.id))
@@ -140,21 +143,11 @@ export default function Dashboard() {
 
     const modal = useDisclosure()
 
-
-    const COLUMNS = [
-        {
-            id: "PENDING",
-            title: "Pendiente"
-        },
-        {
-            id: "DOING",
-            title: "En progreso"
-        },
-        {
-            id: "DONE",
-            title: "Terminado"
-        }
-    ]
+    const [columns, setColumns] = useState([
+        { id: "PENDING", title: "Pendiente" },
+        { id: "DOING", title: "En progreso" },
+        { id: "DONE", title: "Terminado" }
+    ])
 
 
     // progreso
@@ -164,8 +157,8 @@ export default function Dashboard() {
         task => task.status === "DONE"
     ).length;
 
-    const progress = totalTasks === 0 
-        ? 0 
+    const progress = totalTasks === 0
+        ? 0
         : Math.round((completedTasks / totalTasks) * 100);
 
     const pendingTasks = tasks.filter(
@@ -189,8 +182,8 @@ export default function Dashboard() {
 
             return {
                 id: project.idProject,
-                name: project.name?.trim() 
-                    ? project.name 
+                name: project.name?.trim()
+                    ? project.name
                     : `Proyecto ${index + 1}`,
                 total,
                 completed,
@@ -268,33 +261,35 @@ export default function Dashboard() {
                                 <DragDropProvider
 
                                     onDragEnd={(event) => {
-                                        console.log(event);
-                                        console.log("EVENT:", event);
-                                        console.log("SOURCE:", event.operation.source);
-                                        console.log("TARGET:", event.operation.target);
                                         if (event.canceled) return;
+                                        const type = event.operation.source?.type
+                                        const sourceId = event.operation.source?.id
+                                        const targetId = event.operation.target?.id
+                                        if (!targetId) return
 
-                                        const taskId = event.operation.source?.id;
-                                        const newStatus = event.operation.target?.id;
+                                        if (type === "task") {
+                                            handleMoved(sourceId, targetId)
+                                        }
 
-                                        if (!newStatus) return;
-
-                                        setTasks((prev) =>
-                                            prev.map((task) =>
-                                                task.idTask === taskId
-                                                    ? { ...task, status: newStatus }
-                                                    : task
-                                            )
-
-                                        );
-                                        handleMoved(taskId, newStatus);  // aquí
-                                    }
-                                    }
+                                        if (type === "column") {
+                                            setColumns(prev => {
+                                                const oldIndex = prev.findIndex(c => c.id === sourceId)
+                                                const newIndex = prev.findIndex(c => c.id === targetId)
+                                                const updated = [...prev]
+                                                updated.splice(oldIndex, 1)           // saca la columna
+                                                updated.splice(newIndex, 0, prev[oldIndex])  // la mete en nueva posición
+                                                return updated
+                                            })
+                                        }
+                                    }}
                                 >
 
                                     <Flex className="listaTareas" >
-                                        {COLUMNS.map((column) => {
+                                        {columns.map((column) => {
+                                            console.log("tasks:", tasks)
+                                            console.log("columns:", columns)
                                             return <Column
+
                                                 key={column.id}
                                                 column={column}
                                                 tasks={tasks.filter(task => task.status === column.id)}
@@ -316,24 +311,24 @@ export default function Dashboard() {
                                         {projectSummary.length === 0 ? (
                                             <p>No hay proyectos</p>
                                         ) : (
-                                            
+
                                             projectSummary.map(p => (
-                                                <Box 
-                                                    key={p.id} 
-                                                    p={3} 
-                                                    mb={2} 
-                                                    border="1px solid gray" 
+                                                <Box
+                                                    key={p.id}
+                                                    p={3}
+                                                    mb={2}
+                                                    border="1px solid gray"
                                                     borderRadius="8px"
                                                 >
                                                     <strong>{p.name}</strong>
                                                     <br />
-                                                     Total tareas: {p.total}
+                                                    Total tareas: {p.total}
                                                     <br />
-                                                     Completadas: {p.completed}
+                                                    Completadas: {p.completed}
                                                     <br />
-                                                     Pendientes: {p.pending}
-                                                     <br />
-                                                     {p.ownerName}
+                                                    Pendientes: {p.pending}
+                                                    <br />
+                                                    {p.ownerName}
                                                 </Box>
                                             ))
                                         )}

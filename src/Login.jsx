@@ -66,7 +66,7 @@ export default function Login() {
             projects: [
 
                 {
-                    idProject: 1,
+                    idProject: crypto.randomUUID(),
                     nameProject: "New Project",
                     tasks: [{
                         idTask: crypto.randomUUID(),
