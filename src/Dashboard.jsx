@@ -297,9 +297,18 @@ export default function Dashboard() {
                                             return <Column
                                                 key={column.id}
                                                 column={column}
-                                                tasks={tasks.filter(task => task.status === column.id)}
+                                                tasks={
+                                                    tasks
+                                                        .filter(task => task.status === column.id)
+                                                        .sort((a, b) => {
+                                                            if (!a.dueDate) return 1;   // sin fecha abajo
+                                                            if (!b.dueDate) return -1;
+                                                            return new Date(a.dueDate) - new Date(b.dueDate);
+                                                        })
+                                                }
                                                 onEditTask={handleEditTask}
-                                                onDeleteTask={handleDeleteTask} />
+                                                onDeleteTask={handleDeleteTask}
+                                              />
                                         })}
                                     </Flex>
                                 </DragDropProvider>
