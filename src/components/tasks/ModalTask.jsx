@@ -5,22 +5,25 @@ import {
     ModalHeader,
     ModalBody,
     ModalCloseButton,
-    Input
+    Select // Importamos Select de Chakra para que se vea bien
 } from "@chakra-ui/react"
 
 import { useState } from 'react'
+
 function ModalTask({ isOpen, onClose, onCreateTask }) {
     const [nameTask, setNameTask] = useState("")
     const [description, setDescription] = useState("")
-    const [dueDate, setDueDate] = useState("");
+    const [fecha, setFecha] = useState("")
+    const [priority, setPriority] = useState("low") // NUEVO: Estado para la prioridad (baja por defecto)
 
     const handleSubmit = () => {
         const newTask = {
             idTask: crypto.randomUUID(),
             nameTask,
             description,
+            deadLine: fecha,
             status: "PENDING",
-            dueDate: dueDate || null
+            priority: priority // NUEVO: Se incluye la prioridad en el objeto de la tarea
         }
 
         onCreateTask(newTask)
@@ -29,6 +32,8 @@ function ModalTask({ isOpen, onClose, onCreateTask }) {
         // limpiar inputs
         setNameTask("")
         setDescription("")
+        setFecha("")
+        setPriority("low") // NUEVO: Limpiamos también la prioridad
     }
 
     return (
@@ -50,13 +55,26 @@ function ModalTask({ isOpen, onClose, onCreateTask }) {
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
-                    <Input
+
+                    <input
                         type="date"
                         value={dueDate}
                         onChange={(e) => setDueDate(e.target.value)}
                         style={{ marginTop: "10px" }}
                     />
-                    <button onClick={handleSubmit}>
+
+                    {/* NUEVO: Menú desplegable para la prioridad */}
+                    <label style={{ marginTop: "10px", display: "block" }}>Prioridad:</label>
+                    <Select
+                        value={priority}
+                        onChange={(e) => setPriority(e.target.value)}
+                    >
+                        <option value="low">Baja</option>
+                        <option value="medium">Media</option>
+                        <option value="high">Alta</option>
+                    </Select>
+
+                    <button onClick={handleSubmit} style={{ marginTop: "20px" }}>
                         Crear tarea
                     </button>
                 </ModalBody>
