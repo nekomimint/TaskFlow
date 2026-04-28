@@ -22,6 +22,8 @@ import SideBar from "./components/SideBar"
 import { DragDropProvider } from '@dnd-kit/react';
 import { useParams } from "react-router-dom";
 import { useEffect } from 'react';
+import { Progress } from "@chakra-ui/react";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 export default function Dashboard() {
 
     const { userId, projectId } = useParams();
@@ -30,6 +32,7 @@ export default function Dashboard() {
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
     const [owner, setOwner] = useState(null)
+    const [activity, setActivity] = useState([]);
     useEffect(() => {
         const data = localStorage.getItem("user");
         if (data) {
@@ -73,6 +76,8 @@ export default function Dashboard() {
 
         setTasks(updatedTasks);
         saveProject({ ...project, tasks: updatedTasks });
+        const taskToDelete = tasks.find(t => t.idTask === taskId);
+        addActivity(`Se eliminó la tarea "${taskToDelete?.nameTask}"`);
     };
 
     const handleCreateTask = (newTask) => {
@@ -82,6 +87,7 @@ export default function Dashboard() {
         };
         setTasks(updatedProject.tasks); //* Decirle a react que actualice el estado
         saveProject(updatedProject); //* mandar el nuevo proyecto a guardar en JSON
+        addActivity(`Se creó la tarea "${newTask.nameTask}"`);
     };
     const handleUpdateTask = (updatedTask) => {
         const updatedProject = {
@@ -125,6 +131,8 @@ export default function Dashboard() {
         };
         setTasks(updatedProject.tasks);
         saveProject(updatedProject);
+        const movedTask = tasks.find(t => t.idTask === taskId);
+        addActivity(`Se movió la tarea "${movedTask?.nameTask}" a ${newStatus}`);
     };
 
     //* Unas constantes que usa chakra
@@ -147,6 +155,72 @@ export default function Dashboard() {
             title: "Terminado"
         }
     ]
+
+
+    // progreso
+    const totalTasks = tasks.length;
+
+    const completedTasks = tasks.filter(
+        task => task.status === "DONE"
+    ).length;
+
+    const progress = totalTasks === 0 
+        ? 0 
+        : Math.round((completedTasks / totalTasks) * 100);
+
+    const pendingTasks = tasks.filter(
+        task => task.status !== "DONE"
+    ).length;
+
+    const pieData = [
+        { name: "Completadas", value: completedTasks },
+        { name: "Pendientes", value: pendingTasks }
+    ];
+
+    const projectSummary = users.flatMap(user =>
+        user.projects.map((project, index) => {
+            const total = project.tasks.length;
+
+            const completed = project.tasks.filter(
+                t => t.status === "DONE"
+            ).length;
+
+            const pending = total - completed;
+
+            return {
+                id: project.idProject,
+                name: project.name?.trim() 
+                    ? project.name 
+                    : `Proyecto ${index + 1}`,
+                total,
+                completed,
+                pending,
+                ownerName: user.name || user.username || `Usuario ${user.id}` // 👈 AQUÍ
+            };
+        })
+    );
+
+    // actividad
+    const addActivity = (message) => {
+        const newEntry = {
+            id: Date.now(),
+            message,
+            date: new Date().toLocaleString()
+        };
+
+        setActivity(prev => {
+            const updated = [newEntry, ...prev];
+            localStorage.setItem("activity", JSON.stringify(updated));
+            return updated;
+        });
+    };
+
+    const renderLabel = ({ name, value }) => {
+        const total = totalTasks || 1; // evitar división por 0
+        const percentage = Math.round((value / total) * 100);
+
+        return `${percentage}%`;
+    };
 
 
     console.log(owner)
@@ -177,9 +251,10 @@ export default function Dashboard() {
                                 projectId={projectId}
                             />
                         </Button>
-                        {/* <div>
-                            Current project: {projectId}
-                        </div> */}
+                        <Box mt={4}>
+                            <p>Progreso del proyecto: {progress}%</p>
+                            <Progress value={progress} colorScheme="green" />
+                        </Box>
                     </Box>
                     <Tabs>
                         <TabList>
@@ -231,6 +306,83 @@ export default function Dashboard() {
                             </TabPanel>
                             <TabPanel>
                                 <p>Calendario</p>
+                            </TabPanel>
+                            <TabPanel>
+                                <Flex gap={10} align="flex-start" wrap="wrap">
+
+                                    <Box mb={6}>
+                                        <p style={{ fontWeight: "bold" }}>Resumen general</p>
+
+                                        {projectSummary.length === 0 ? (
+                                            <p>No hay proyectos</p>
+                                        ) : (
+                                            
+                                            projectSummary.map(p => (
+                                                <Box 
+                                                    key={p.id} 
+                                                    p={3} 
+                                                    mb={2} 
+                                                    border="1px solid gray" 
+                                                    borderRadius="8px"
+                                                >
+                                                    <strong>{p.name}</strong>
+                                                    <br />
+                                                     Total tareas: {p.total}
+                                                    <br />
+                                                     Completadas: {p.completed}
+                                                    <br />
+                                                     Pendientes: {p.pending}
+                                                     <br />
+                                                     {p.ownerName}
+                                                </Box>
+                                            ))
+                                        )}
+                                    </Box>
+
+                                    {/* GRÁFICA */}
+                                    <Box>
+                                        <p>Resumen de tareas</p>
+
+                                        {tasks.length === 0 ? (
+                                            <p>No hay tareas</p>
+                                        ) : (
+                                            <PieChart width={300} height={300}>
+                                                <Pie
+                                                    data={pieData}
+                                                    dataKey="value"
+                                                    nameKey="name"
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    outerRadius={100}
+                                                    label={renderLabel}
+                                                >
+                                                    <Cell fill="#4CAF50" />
+                                                    <Cell fill="#F44336" />
+                                                </Pie>
+                                                <Tooltip />
+                                                <Legend />
+                                            </PieChart>
+                                        )}
+                                    </Box>
+
+                                    {/* HISTORIAL */}
+                                    <Box flex="1">
+                                        <p>Actividad reciente</p>
+
+                                        {activity.length === 0 ? (
+                                            <p>No hay actividad aún</p>
+                                        ) : (
+                                            activity.map(item => (
+                                                <Box key={item.id} p={2} borderBottom="1px solid gray">
+                                                    <strong>{item.message}</strong>
+                                                    <br />
+                                                    <small>{item.date}</small>
+                                                </Box>
+                                            ))
+                                        )}
+                                    </Box>
+
+                                </Flex>
                             </TabPanel>
                             <TabPanel>
                                 <p>three!</p>
