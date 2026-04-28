@@ -156,25 +156,6 @@ export default function Dashboard() {
         }
     ]
 
-    const projectSummary = users.flatMap(user =>
-        user.projects.map((project, index) => {
-            const total = project.tasks.length;
-
-            const completed = project.tasks.filter(
-                t => t.status === "DONE"
-            ).length;
-
-            const pending = total - completed;
-
-            return {
-                id: project.idProject,
-                name: project.name || `Proyecto ${index + 1}`,
-                total,
-                completed,
-                pending
-            };
-        })
-    );
 
     // progreso
     const totalTasks = tasks.length;
