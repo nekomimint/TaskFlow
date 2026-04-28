@@ -35,6 +35,7 @@ export default function Column({ column, tasks, onEditTask, onDeleteTask }) {
                             title={tarea.nameTask}
                             descripcion={tarea.description}
                             status={tarea.status}
+                            priority={tarea.priority}
                             onEditTask={onEditTask}
                             onDeleteTask={onDeleteTask}
                         />
