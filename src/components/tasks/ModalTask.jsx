@@ -4,21 +4,23 @@ import {
     ModalContent,
     ModalHeader,
     ModalBody,
-    ModalCloseButton
+    ModalCloseButton,
+    Input
 } from "@chakra-ui/react"
+
 import { useState } from 'react'
 function ModalTask({ isOpen, onClose, onCreateTask }) {
     const [nameTask, setNameTask] = useState("")
     const [description, setDescription] = useState("")
-    const [fecha, setFecha] = useState("")
+    const [dueDate, setDueDate] = useState("");
 
     const handleSubmit = () => {
         const newTask = {
             idTask: crypto.randomUUID(),
             nameTask,
             description,
-            deadLine: fecha,
-            status: "PENDING"
+            status: "PENDING",
+            dueDate: dueDate || null
         }
 
         onCreateTask(newTask)
@@ -48,10 +50,11 @@ function ModalTask({ isOpen, onClose, onCreateTask }) {
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
-                    <input
+                    <Input
                         type="date"
-                        value={fecha}
-                        onChange={(e) => setFecha(e.target.value)}
+                        value={dueDate}
+                        onChange={(e) => setDueDate(e.target.value)}
+                        style={{ marginTop: "10px" }}
                     />
                     <button onClick={handleSubmit}>
                         Crear tarea

@@ -19,7 +19,7 @@ import { LuPencilLine } from "react-icons/lu";
 import { useColorModeValue } from "@chakra-ui/react";
 
 
-export default function Tasks({ id, title, descripcion, status, onEditTask, onDeleteTask }) {
+export default function Tasks({ id, title, descripcion, status, dueDate, onEditTask, onDeleteTask }) {
     const { ref, listeners, attributes } = useDraggable({
         id: id,
         type: "task"
@@ -44,6 +44,8 @@ export default function Tasks({ id, title, descripcion, status, onEditTask, onDe
 
     const taskBg = useColorModeValue("gray.100", "gray.700");
     const taskText = useColorModeValue("black", "white");
+
+    console.log("dueDate:", dueDate);
 
     return (
         <div ref={ref}  {...attributes}>
@@ -81,6 +83,11 @@ export default function Tasks({ id, title, descripcion, status, onEditTask, onDe
                                 onClick={handleEdit}
                             />
                         </div>
+                        {dueDate && (
+                            <small style={{ marginTop: "5px", opacity: 0.7 }}>
+                                 {new Date(dueDate).toLocaleDateString()}
+                            </small>
+                        )}
                     </Flex>
                 </AccordionPanel>
             </AccordionItem>
