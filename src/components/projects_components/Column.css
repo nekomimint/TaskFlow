@@ -1,0 +1,19 @@
+.spaceTasks {
+    display: flex;
+    flex-direction: column;
+
+    /* background-color: aquamarine; */
+}
+
+.taskBoard {
+    background-color: rgb(91, 81, 70);
+    border-radius: 15px;
+
+}
+
+.columnContainer {
+    /* background-color: #371414; */
+    min-width: 0;
+    min-height: 0;
+    border-radius: 15px;
+}
