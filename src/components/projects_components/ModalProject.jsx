@@ -24,9 +24,12 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
     const [nameProject, setNameProject] = useState("")
 
     const [sharedUsers, setSharedUsers] = useState([])
-    const [nameNewUser, setNameNewUser] = useState([]);
+    const [nameNewUser, setNameNewUser] = useState("");
 
     const [allUsers, setAllUsers] = useState([])
+
+    const [error, setError] = useState("")
+    const [userError, setUserError] = useState("")
 
     useEffect(() => {
         const data = localStorage.getItem("user")
@@ -37,17 +40,27 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
         if (!nameNewUser.trim()) return
 
         if (!allUsers.some(u => u.userName === nameNewUser)) {
-            console.log("No existe ese usuario cabron")
+            console.log("Usuario no existente")
             return
         }
         if (newUser === ownerName) {
-            console.log("No te puedes agregar a ti mismo webon")
+            console.log("No te puedes agregar a ti mismo ")
             return
         }
 
+        if (!nameNewUser.trim()) {
+            setUserError("Escribe un nombre de usuario");
+            return;
+        }
+
+        if (sharedUsers.includes(newUser)) {
+            setUserError("Ese usuario ya está agregado");
+            return;
+        }
         setSharedUsers(prev => [...prev, newUser])
         console.log("limpiar")
         setNameNewUser("")
+        setUserError("");
     }
 
     const handleDeleteUser = (user) => {
@@ -56,33 +69,37 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
 
     const handleSubmit = () => {
 
-        const sharedUserIds = sharedUsers.map(name =>
-            allUsers.find(u => u.userName === name)?.id
-        ).filter(Boolean)  // elimina los undefined por si acaso
+        if (!nameProject.trim()) {
+        setError("El nombre del proyecto es obligatorio");
+        return;
+    }
 
+    setError("");
 
+    const sharedUserIds = sharedUsers.map(name =>
+        allUsers.find(u => u.userName === name)?.id
+    ).filter(Boolean)
 
-        const newProject = {
-            idProject: crypto.randomUUID(),
-            nameProject: nameProject,
-            tasks: [{
-                idTask: crypto.randomUUID(),
-                nameTask: "New Task",
-                description: "Desc",
-                deadLine: new Date().toISOString().split("T")[0],
-                status: "PENDING",
-                priority: "HIGH",
-                usersAsigned: [], //* Todos los usuarios asignado a la tarea
-            }],
-            sharedUsers: sharedUserIds //* Todas los usuarios que participan en el proyecto, (UUID)
+    const newProject = {
+        idProject: crypto.randomUUID(),
+        nameProject: nameProject,
+        tasks: [{
+            idTask: crypto.randomUUID(),
+            nameTask: "New Task",
+            description: "Desc",
+            deadLine: new Date().toISOString().split("T")[0],
+            status: "PENDING",
+            priority: "HIGH",
+            usersAsigned: [],
+        }],
+        sharedUsers: sharedUserIds
+    }
 
-        }
+    onCreateProject(newProject)
+    onClose()
 
-        onCreateProject(newProject)
-        onClose()
-
-        // limpiar inputs
-        setNameProject("")
+    setNameProject("")
+    setSharedUsers([])
     }
 
 
@@ -101,6 +118,8 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
                         onChange={(e) => setNameProject(e.target.value)}
                     />
 
+                    {error && <Text color="red.500">{error}</Text>}
+
 
                     <Flex>
                         <input
@@ -112,6 +131,9 @@ function ModalProject({ isOpen, onClose, onCreateProject, ownerName }) {
                         <Button onClick={() => handleMultipleUsers(nameNewUser)}>
                             Agregar usuario
                         </Button>
+
+                        {userError && <Text color="red.500">{userError}</Text>}
+
                     </Flex>
                     <Text>Usuarios compartidos</Text>
                     {(sharedUsers ?? []).map(user => (

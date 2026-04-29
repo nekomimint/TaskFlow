@@ -7,6 +7,7 @@ import {
     ModalCloseButton,
     Select // Importamos Select de Chakra para que se vea bien
 } from "@chakra-ui/react"
+import { Text } from "@chakra-ui/react"
 
 import { useState } from 'react'
 
@@ -53,22 +54,14 @@ function ModalTask({ isOpen, onClose, onCreateTask }) {
                 <ModalCloseButton />
 
                 <ModalBody>
-                    {error && (
-                        <p style={{ color: "red", marginTop: "10px" }}>
-                            {error}
-                        </p>
-                    )}
+                    {error && <Text color="red.500">{error}</Text>}
                     <input
                         placeholder="Título"
                         value={nameTask}
                         onChange={(e) => setNameTask(e.target.value)}
                     />
 
-                    {error && (
-                        <p style={{ color: "red", marginTop: "10px" }}>
-                            {error}
-                        </p>
-                    )}
+                    {error && <Text color="red.500">{error}</Text>}
                     <input
                         placeholder="Descripción"
                         value={description}

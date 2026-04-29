@@ -27,6 +27,10 @@ export default function Login() {
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
     const [profilePhoto, setProfilePhoto] = useState(null)
+    const [errorLogin, setErrorLogin] = useState("")
+    const [errorCreate, setErrorCreate] = useState("")
+    
+    
     // Y carga el localStorage al montar el componente
     useEffect(() => {
         const data = localStorage.getItem("user")
@@ -49,13 +53,18 @@ export default function Login() {
         console.log("1. userName:", userName)
         console.log("2. password:", password)
         console.log("3. profilePhoto:", profilePhoto)
-        if (!userName.trim() || !password.trim()) return  // validación básica
+         if (!userName.trim() || !password.trim()) {
+            setErrorCreate("Todos los campos son obligatorios");
+            return;
+        } // validación básica
 
         const exists = users.some(u => u.userName === userName)
         if (exists) {
-            // setError("El nombre de usuario ya está en uso")
+            setErrorCreate("El usuario ya existe");
             return
         }
+
+        setErrorCreate("");
 
         const newUser = {
             id: crypto.randomUUID(),
@@ -93,21 +102,22 @@ export default function Login() {
     const [passwordLogin, setPasswordLogin] = useState("")
 
     function handleLogin() {
+        if (!userNameLogin.trim() || !passwordLogin.trim()) {
+        setErrorLogin("Debes llenar todos los campos");
+        return;
+        }
+
         const userFound = users.find(user =>
             user.userName === userNameLogin &&
             user.password === passwordLogin
         )
 
-        if (userNameLogin == null || passwordLogin == null) {
-
-            return
-        }
-
-
         if (!userFound) {
-
-            return
+            setErrorLogin("Usuario o contraseña incorrectos");
+            return;
         }
+
+        setErrorLogin(""); // limpiar error
 
         navigate(`/projects/${userFound.id}`)
     }
@@ -183,18 +193,31 @@ export default function Login() {
                                                 <Text color="red.400">La imagen supera 1MB</Text>
                                             )}
                                         </Flex>
+                                        
 
                                         <Input placeholder='Usuario | Correo electronico'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
                                             onChange={(e) => setUserName(e.target.value)}
                                         />
+                                        {errorCreate && (
+                                            <Text color="red.400" textAlign="center">
+                                                {errorCreate}
+                                            </Text>
+                                        )}
+
                                         <Input type="password"
                                             placeholder='Contraseña'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
                                             onChange={(e) => setPassword(e.target.value)}
                                         />
+
+                                        {errorCreate && (
+                                            <Text color="red.400" textAlign="center">
+                                                {errorCreate}
+                                            </Text>
+                                        )}
                                         <Center>
                                             <Button onClick={() => setCreateAccount(false)}>
                                                 ¿Ya tienes una cuenta?
@@ -227,11 +250,23 @@ export default function Login() {
                                     <Stack direction={['column']} spacing='24px'>
                                         <Heading textAlign="Center" as="h1" size="2xl">Task Flow</Heading>
                                         <Heading textAlign="Center" as="h2" size="md">Iniciar sesión</Heading>
+                                        
+                                        {errorLogin && (
+                                            <Text color="red.400" textAlign="center">
+                                                {errorLogin}
+                                            </Text>
+                                        )}
                                         <Input placeholder='Usuario | Correo electronico'
                                             focusBorderColor="#c7c3ff"
                                             borderColor="#6b6881"
                                             onChange={(e) => setUserNameLogin(e.target.value)}
                                         />
+                                        
+                                        {errorLogin && (
+                                            <Text color="red.400" textAlign="center">
+                                                {errorLogin}
+                                            </Text>
+                                        )}
                                         <Input type="password"
                                             placeholder='Contraseña'
                                             focusBorderColor="#c7c3ff"
