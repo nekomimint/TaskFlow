@@ -2,14 +2,9 @@ import { useState } from "react";
 import { Box, Flex, Text, Badge, IconButton } from "@chakra-ui/react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
-// Colores para la franja de prioridad (igual que en Tasks.jsx)
 const priorityColors = {
-    high: "#E53E3E",
-    medium: "#DD6B20",
-    low: "#38A169",
-    HIGH: "#E53E3E",
-    MEDIUM: "#DD6B20",
-    LOW: "#38A169",
+    high: "#E53E3E", medium: "#DD6B20", low: "#38A169",
+    HIGH: "#E53E3E", MEDIUM: "#DD6B20", LOW: "#38A169",
 };
 
 const priorityLabel = {
@@ -32,14 +27,13 @@ const MONTHS = [
 export default function CalendarView({ tasks = [] }) {
     const today = new Date();
     const [currentYear, setCurrentYear] = useState(today.getFullYear());
-    const [currentMonth, setCurrentMonth] = useState(today.getMonth()); // 0-indexed
+    const [currentMonth, setCurrentMonth] = useState(today.getMonth());
     const [selectedDay, setSelectedDay] = useState(null);
 
-    // Tareas del mes actual agrupadas por día
     const tasksByDay = {};
     tasks.forEach(task => {
         if (!task.deadLine) return;
-        const d = new Date(task.deadLine + "T00:00:00"); // evitar offset UTC
+        const d = new Date(task.deadLine + "T00:00:00");
         if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {
             const day = d.getDate();
             if (!tasksByDay[day]) tasksByDay[day] = [];
@@ -47,8 +41,7 @@ export default function CalendarView({ tasks = [] }) {
         }
     });
 
-    // Calcular la grilla del mes
-    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay(); // 0=Dom
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const totalCells = Math.ceil((firstDayOfMonth + daysInMonth) / 7) * 7;
 
@@ -82,45 +75,38 @@ export default function CalendarView({ tasks = [] }) {
             bg="gray.900"
             borderRadius="16px"
             p={5}
-            maxW="900px"
+            maxW="100%"
             mx="auto"
             boxShadow="0 8px 32px rgba(0,0,0,0.5)"
         >
             {/* ── Header navegación ── */}
             <Flex align="center" justify="space-between" mb={5}>
+                {/* ✅ FIX: flechas con color visible */}
                 <IconButton
-                    icon={<LuChevronLeft />}
+                    icon={<LuChevronLeft size={20} />}
                     aria-label="Mes anterior"
                     onClick={prevMonth}
                     variant="ghost"
-                    colorScheme="whiteAlpha"
-                    size="sm"
-                />
-                <Text
-                    fontSize="xl"
-                    fontWeight="700"
                     color="white"
-                    letterSpacing="wide"
-                >
+                    _hover={{ bg: "gray.700", color: "blue.300" }}
+                    size="md"
+                />
+                <Text fontSize="xl" fontWeight="700" color="white" letterSpacing="wide">
                     {MONTHS[currentMonth]} {currentYear}
                 </Text>
                 <IconButton
-                    icon={<LuChevronRight />}
+                    icon={<LuChevronRight size={20} />}
                     aria-label="Mes siguiente"
                     onClick={nextMonth}
                     variant="ghost"
-                    colorScheme="whiteAlpha"
-                    size="sm"
+                    color="white"
+                    _hover={{ bg: "gray.700", color: "blue.300" }}
+                    size="md"
                 />
             </Flex>
 
             {/* ── Encabezados días de semana ── */}
-            <Box
-                display="grid"
-                gridTemplateColumns="repeat(7, 1fr)"
-                gap={1}
-                mb={1}
-            >
+            <Box display="grid" gridTemplateColumns="repeat(7, 1fr)" gap={1} mb={1}>
                 {DAYS_OF_WEEK.map(d => (
                     <Text
                         key={d}
@@ -138,11 +124,7 @@ export default function CalendarView({ tasks = [] }) {
             </Box>
 
             {/* ── Grilla del calendario ── */}
-            <Box
-                display="grid"
-                gridTemplateColumns="repeat(7, 1fr)"
-                gap={1}
-            >
+            <Box display="grid" gridTemplateColumns="repeat(7, 1fr)" gap={1}>
                 {cells.map((day, idx) => {
                     const dayTasks = day ? (tasksByDay[day] || []) : [];
                     const isSelected = day === selectedDay;
@@ -151,30 +133,27 @@ export default function CalendarView({ tasks = [] }) {
                     return (
                         <Box
                             key={idx}
-                            minH="72px"
+                            // ✅ FIX: altura fija para que no se comprima en meses de 6 semanas
+                            h="80px"
                             borderRadius="10px"
                             p={1}
                             cursor={day ? "pointer" : "default"}
                             bg={
-                                isSelected
-                                    ? "blue.700"
-                                    : isTodayCell
-                                    ? "blue.900"
-                                    : day
-                                    ? "gray.800"
-                                    : "transparent"
+                                isSelected ? "blue.700"
+                                : isTodayCell ? "blue.900"
+                                : day ? "gray.800"
+                                : "transparent"
                             }
                             border={isTodayCell ? "2px solid" : "1px solid"}
                             borderColor={
-                                isSelected
-                                    ? "blue.400"
-                                    : isTodayCell
-                                    ? "blue.400"
-                                    : "gray.700"
+                                isSelected ? "blue.400"
+                                : isTodayCell ? "blue.400"
+                                : "gray.700"
                             }
                             transition="all 0.15s ease"
                             _hover={day ? { bg: isSelected ? "blue.600" : "gray.700", transform: "scale(1.02)" } : {}}
                             onClick={() => day && setSelectedDay(day === selectedDay ? null : day)}
+                            overflow="hidden"
                         >
                             {day && (
                                 <>
@@ -187,8 +166,6 @@ export default function CalendarView({ tasks = [] }) {
                                     >
                                         {day}
                                     </Text>
-
-                                    {/* Puntos / pastillas de tareas */}
                                     <Flex flexWrap="wrap" gap="2px" px={1}>
                                         {dayTasks.slice(0, 3).map(task => (
                                             <Box
@@ -202,12 +179,7 @@ export default function CalendarView({ tasks = [] }) {
                                                 borderLeftColor={priorityColors[task.priority] || "gray.500"}
                                                 overflow="hidden"
                                             >
-                                                <Text
-                                                    fontSize="9px"
-                                                    color="gray.200"
-                                                    noOfLines={1}
-                                                    lineHeight="1.4"
-                                                >
+                                                <Text fontSize="9px" color="gray.200" noOfLines={1} lineHeight="1.4">
                                                     {task.nameTask}
                                                 </Text>
                                             </Box>
@@ -227,18 +199,10 @@ export default function CalendarView({ tasks = [] }) {
 
             {/* ── Panel de detalle al seleccionar un día ── */}
             {selectedDay && (
-                <Box
-                    mt={4}
-                    bg="gray.800"
-                    borderRadius="12px"
-                    p={4}
-                    borderTop="3px solid"
-                    borderTopColor="blue.400"
-                >
+                <Box mt={4} bg="gray.800" borderRadius="12px" p={4} borderTop="3px solid" borderTopColor="blue.400">
                     <Text fontWeight="700" color="white" mb={3} fontSize="sm">
                         📅 {selectedDay} de {MONTHS[currentMonth]} — {selectedTasks.length} tarea{selectedTasks.length !== 1 ? "s" : ""}
                     </Text>
-
                     {selectedTasks.length === 0 ? (
                         <Text color="gray.400" fontSize="sm">
                             No hay tareas con fecha límite en este día.
@@ -260,32 +224,17 @@ export default function CalendarView({ tasks = [] }) {
                                         _hover={{ opacity: 0.9 }}
                                     >
                                         <Flex justify="space-between" align="flex-start" wrap="wrap" gap={1}>
-                                            <Text
-                                                fontWeight="600"
-                                                color="white"
-                                                fontSize="sm"
-                                                flex="1"
-                                            >
+                                            <Text fontWeight="600" color="white" fontSize="sm" flex="1">
                                                 {task.nameTask}
                                             </Text>
                                             <Flex gap={1} flexShrink={0}>
-                                                <Badge
-                                                    fontSize="10px"
-                                                    borderRadius="4px"
-                                                    px={2}
-                                                    bg={prioColor}
-                                                    color="white"
-                                                >
+                                                <Badge fontSize="10px" borderRadius="4px" px={2} bg={prioColor} color="white">
                                                     {priorityLabel[task.priority] || task.priority}
                                                 </Badge>
                                                 <Badge
-                                                    fontSize="10px"
-                                                    borderRadius="4px"
-                                                    px={2}
-                                                    color={st.color}
-                                                    bg="transparent"
-                                                    border="1px solid"
-                                                    borderColor={st.color}
+                                                    fontSize="10px" borderRadius="4px" px={2}
+                                                    color={st.color} bg="transparent"
+                                                    border="1px solid" borderColor={st.color}
                                                 >
                                                     {st.label}
                                                 </Badge>

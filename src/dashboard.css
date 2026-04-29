@@ -38,3 +38,16 @@
     min-width: 75vw;
     max-width: 75vw;
 }
+
+.chakra-tabs {
+    width: 100%;
+}
+
+.chakra-tabs__tab-panels {
+    width: 100%;
+}
+
+.chakra-tabs__tab-panel {
+    padding: 16px !important;
+    width: 100%;
+}
