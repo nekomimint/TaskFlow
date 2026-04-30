@@ -170,7 +170,7 @@ export default function Dashboard() {
     ];
 
     const projectSummary = users.flatMap(user =>
-        user.projects.map(project => {
+        user.projects.map((project, index) => {
             const total = project.tasks.length;
             const completed = project.tasks.filter(t => t.status === "DONE").length;
             const pending = total - completed;

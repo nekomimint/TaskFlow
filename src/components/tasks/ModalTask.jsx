@@ -56,7 +56,6 @@ function ModalTask({ isOpen, onClose, onCreateTask, usersShared, ownerName, allU
         setUserInput("")
     }
 
-    const [priority, setPriority] = useState("low") // NUEVO: Estado para la prioridad (baja por defecto)
     const [error, setError] = useState("")
 
     const handleSubmit = () => {
