@@ -1,0 +1,59 @@
+.menuOpciones {
+    display: flex;
+    flex-direction: column;
+    /* background-color: aqua; */
+    min-width: 0;
+    min-height: 0;
+    gap: 2%;
+}
+
+
+.contenedorDashboard {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-width: 100vw;
+    min-height: 100vh;
+}
+
+.contenedorTareas {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-width: 100vw;
+    min-height: 100vh;
+    gap: 2%;
+    /* background-color: #FF00FF; */
+}
+
+.listaTareas {
+    display: flex;
+    flex-direction: row;
+    /* background-color: blue; */
+
+    padding: 1%;
+    gap: 2%;
+    min-width: 75vw;
+    max-width: 75vw;
+}
+
+.listaProyectos {
+    overflow-y: scroll;
+    max-height: 80vh;
+
+    .chakra-tabs {
+        width: 100%;
+    }
+
+    .chakra-tabs__tab-panels {
+        width: 100%;
+    }
+
+    .chakra-tabs__tab-panel {
+        padding: 16px !important;
+        width: 100%;
+    }
+
+}
