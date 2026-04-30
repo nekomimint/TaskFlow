@@ -55,9 +55,9 @@ export default function Tasks({ id, title, descripcion, dueDate, status, priorit
     const taskBg = useColorModeValue("gray.100", "gray.700");
     const taskText = useColorModeValue("black", "white");
 
-    console.log("dueDate:", dataTask.deadLine);
-    console.log("Nombre tarea: ", dataTask.nameTask)
-    console.log(dataTask.usersAsigned)
+    // console.log("dueDate:", dataTask.deadLine);
+    // console.log("Nombre tarea: ", dataTask.nameTask)
+    // console.log(dataTask.usersAsigned)
     return (
         <div ref={ref} {...attributes}>
             <AccordionItem

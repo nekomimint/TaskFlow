@@ -33,14 +33,18 @@ export default function Dashboard() {
     const [tasks, setTasks] = useState([]);
     const [owner, setOwner] = useState(null)
     const [activity, setActivity] = useState([]);
-
+    const [columns, setColumns] = useState([
+        { id: "PENDING", title: "Pendiente" },
+        { id: "DOING", title: "En progreso" },
+        { id: "DONE", title: "Terminado" }
+    ])
     useEffect(() => {
         const data = localStorage.getItem("user");
         if (data) {
             const parsed = JSON.parse(data);
             setUsers(parsed);
 
-            // ✅ FIX: comparar como strings para evitar number vs string
+            // FIX: comparar como strings para evitar number vs string
             const foundOwner = parsed.find(user =>
                 user.projects.some(p => String(p.idProject) === String(projectId))
             );
@@ -54,10 +58,10 @@ export default function Dashboard() {
             setOwner(foundOwner.id)  // para usarlo fuera del useEffect
 
             if (foundOwner) {
-                console.log("parsed:", parsed)
-                console.log("projectId:", projectId)
-                console.log("userId :", foundOwner.id)
-                console.log("foundOwner:", foundOwner)
+                // console.log("parsed:", parsed)
+                // console.log("projectId:", projectId)
+                // console.log("userId :", foundOwner.id)
+                // console.log("foundOwner:", foundOwner)
                 setOwner(foundOwner.id)
 
                 // ✅ FIX: comparar como strings aquí también
@@ -74,7 +78,7 @@ export default function Dashboard() {
     const ownerName = users.find(u =>
         u.projects.some(p => p.idProject === projectId)
     )?.userName
-    console.log("Dueno: ", ownerName)
+    // console.log("Dueno: ", ownerName)
     const handleEditTask = (idTask, newTitle, newDesc) => {
         const updatedTasks = tasks.map(task =>
             task.idTask === idTask
@@ -209,7 +213,7 @@ export default function Dashboard() {
     };
 
 
-    console.log("Usuarios: ", users)
+    // console.log("Usuarios: ", users)
     return (
         <>
             <Box className="contenedorDashboard">
@@ -249,23 +253,38 @@ export default function Dashboard() {
                         <TabPanels>
                             <TabPanel>
                                 <DragDropProvider
+
                                     onDragEnd={(event) => {
                                         if (event.canceled) return;
-                                        const taskId = event.operation.source?.id;
-                                        const newStatus = event.operation.target?.id;
-                                        if (!newStatus) return;
-                                        setTasks((prev) =>
-                                            prev.map((task) =>
-                                                task.idTask === taskId
-                                                    ? { ...task, status: newStatus }
-                                                    : task
-                                            )
-                                        );
-                                        handleMoved(taskId, newStatus);
+                                        const type = event.operation.source?.type
+                                        const sourceId = event.operation.source?.id
+                                        const targetId = event.operation.target?.id
+
+                                        console.log("type dnd:", type)
+                                        console.log("sourceId dnd:", sourceId)
+                                        console.log("targetId dnd:", targetId)
+
+                                        if (!targetId) return
+
+                                        if (type === "task") {
+                                            handleMoved(sourceId, targetId)
+                                        }
+
+                                        if (type === "column") {
+                                            setColumns(prev => {
+                                                const oldIndex = prev.findIndex(c => c.id === sourceId)
+                                                const newIndex = prev.findIndex(c => c.id === targetId)
+                                                const updated = [...prev]
+                                                updated.splice(oldIndex, 1)
+                                                updated.splice(newIndex, 0, prev[oldIndex])
+                                                console.log("updated:", updated)
+                                                return updated
+                                            })
+                                        }
                                     }}
                                 >
                                     <Flex className="listaTareas">
-                                        {COLUMNS.map((column) => (
+                                        {columns.map((column) => (
                                             <Column
                                                 key={column.id}
                                                 column={column}
@@ -302,7 +321,7 @@ export default function Dashboard() {
 
                                                 >
                                                     {
-                                                        console.log("Resumen de proyecto: ", projectSummary)
+                                                        // console.log("Resumen de proyecto: ", projectSummary)
                                                         //console.log("Objeto traido: ",p)
                                                     }
                                                     <strong>{p.name}</strong>

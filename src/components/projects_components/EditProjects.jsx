@@ -23,7 +23,7 @@ import AppIcon from "../AppIcon"
 import ButtonIcon from "../ButtonIcon"
 function EditProjects({ isOpen, onClose, onUpdateProject, ownerName, projectData, allData }) {
 
-    console.log("Project data: ", projectData)
+    // console.log("Project data: ", projectData)
     const [allUsers, setAllUsers] = useState(allData)
     const [nameProject, setNameProject] = useState(projectData.nameProject)
     const [sharedUsers, setSharedUsers] = useState(
@@ -40,20 +40,20 @@ function EditProjects({ isOpen, onClose, onUpdateProject, ownerName, projectData
         if (data) setAllUsers(JSON.parse(data))
     }, [])  // solo se ejecuta una vez
     const handleMultipleUsers = (newUser) => {
-        console.log("Usuario que llego ", newUser)
+        // console.log("Usuario que llego ", newUser)
         if (!nameNewUser.trim()) return
 
         if (!allUsers.some(u => u.userName === nameNewUser)) {
-            console.log("No existe ese usuario cabron")
+            // console.log("No existe ese usuario cabron")
             return
         }
         if (newUser === ownerName) {
-            console.log("No te puedes agregar a ti mismo webon")
+            // console.log("No te puedes agregar a ti mismo webon")
             return
         }
 
         setSharedUsers(prev => [...prev, newUser])
-        console.log("limpiar")
+        // console.log("limpiar")
         setNameNewUser("")
     }
 
@@ -79,7 +79,7 @@ function EditProjects({ isOpen, onClose, onUpdateProject, ownerName, projectData
         setNameProject("")
     }
 
-    console.log(sharedUsers)
+    // console.log(sharedUsers)
     return (
 
         <>
