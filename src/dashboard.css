@@ -42,4 +42,18 @@
 .listaProyectos {
     overflow-y: scroll;
     max-height: 80vh;
+
+    .chakra-tabs {
+        width: 100%;
+    }
+
+    .chakra-tabs__tab-panels {
+        width: 100%;
+    }
+
+    .chakra-tabs__tab-panel {
+        padding: 16px !important;
+        width: 100%;
+    }
+
 }

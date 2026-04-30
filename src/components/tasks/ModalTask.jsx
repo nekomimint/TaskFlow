@@ -56,7 +56,15 @@ function ModalTask({ isOpen, onClose, onCreateTask, usersShared, ownerName, allU
         setUserInput("")
     }
 
+    const [priority, setPriority] = useState("low") // NUEVO: Estado para la prioridad (baja por defecto)
+    const [error, setError] = useState("")
+
     const handleSubmit = () => {
+        if (!nameTask.trim() || !description.trim()) {
+            setError("El título y la descripción son obligatorios");
+            return;
+        }
+
         const newTask = {
             idTask: crypto.randomUUID(),
             nameTask,
@@ -75,6 +83,8 @@ function ModalTask({ isOpen, onClose, onCreateTask, usersShared, ownerName, allU
         setAssignedUsers([])
     }
 
+
+
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -83,12 +93,14 @@ function ModalTask({ isOpen, onClose, onCreateTask, usersShared, ownerName, allU
                 <ModalCloseButton />
 
                 <ModalBody>
+                    {error && <Text color="red.500">{error}</Text>}
                     <input
                         placeholder="Título"
                         value={nameTask}
                         onChange={(e) => setNameTask(e.target.value)}
                     />
 
+                    {error && <Text color="red.500">{error}</Text>}
                     <input
                         placeholder="Descripción"
                         value={description}

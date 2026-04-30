@@ -10,9 +10,6 @@ import { Stack } from '@chakra-ui/react'
 import { Heading } from '@chakra-ui/react'
 import { Link } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-
-import { useDraggable } from '@dnd-kit/react';
-
 import CalendarView from "./components/tasks/CalendarView";
 import { useDisclosure } from '@chakra-ui/react'
 import React from 'react'
@@ -27,6 +24,7 @@ import { useParams } from "react-router-dom";
 import { useEffect } from 'react';
 import { Progress } from "@chakra-ui/react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+
 export default function Dashboard() {
 
     const { userId, projectId } = useParams();
@@ -35,15 +33,16 @@ export default function Dashboard() {
     const [tasks, setTasks] = useState([]);
     const [owner, setOwner] = useState(null)
     const [activity, setActivity] = useState([]);
+
     useEffect(() => {
         const data = localStorage.getItem("user");
         if (data) {
             const parsed = JSON.parse(data);
             setUsers(parsed);
 
-            // variable local, disponible de inmediato
+            // ✅ FIX: comparar como strings para evitar number vs string
             const foundOwner = parsed.find(user =>
-                user.projects.some(p => p.idProject === projectId)
+                user.projects.some(p => String(p.idProject) === String(projectId))
             );
             // console.log("foundOwner:", foundOwner)  // ¿es undefined?
             // console.log("projectId:", projectId, typeof projectId)
@@ -55,8 +54,15 @@ export default function Dashboard() {
             setOwner(foundOwner.id)  // para usarlo fuera del useEffect
 
             if (foundOwner) {
+                console.log("parsed:", parsed)
+                console.log("projectId:", projectId)
+                console.log("userId :", foundOwner.id)
+                console.log("foundOwner:", foundOwner)
+                setOwner(foundOwner.id)
+
+                // ✅ FIX: comparar como strings aquí también
                 const foundProject = foundOwner.projects.find(
-                    p => p.idProject === (projectId)
+                    p => String(p.idProject) === String(projectId)
                 );
                 setProject(foundProject);
                 setTasks(foundProject.tasks);
@@ -75,7 +81,6 @@ export default function Dashboard() {
                 ? { ...task, nameTask: newTitle, description: newDesc }
                 : task
         );
-
         setTasks(updatedTasks);
         saveProject({ ...project, tasks: updatedTasks });
     };
@@ -84,7 +89,6 @@ export default function Dashboard() {
         const updatedTasks = tasks.filter(task =>
             task.idTask !== taskId
         );
-
         setTasks(updatedTasks);
         saveProject({ ...project, tasks: updatedTasks });
         const taskToDelete = tasks.find(t => t.idTask === taskId);
@@ -93,50 +97,50 @@ export default function Dashboard() {
 
     const handleCreateTask = (newTask) => {
         const updatedProject = {
-            ...project, //* Copiar el proyecto
-            tasks: [...tasks, newTask] //* Copiar todas las tareas mas la nueva
+            ...project,
+            tasks: [...tasks, newTask]
         };
-        setTasks(updatedProject.tasks); //* Decirle a react que actualice el estado
-        saveProject(updatedProject); //* mandar el nuevo proyecto a guardar en JSON
+        setTasks(updatedProject.tasks);
+        saveProject(updatedProject);
         addActivity(`Se creó la tarea "${newTask.nameTask}"`);
     };
+
     const handleUpdateTask = (updatedTask) => {
         const updatedProject = {
-            ...project, //* Copiado de proyecto (copy)
-            tasks: tasks.map(task => //* Ciclo for para recorrer cada task
-                task.idTask === updatedTask.idTask  //* ¿Es la que queremos actualizar?
-                    ? updatedTask           //* Sí → la reemplaza, osea el updatedTask sustituye al task que este en el id
-                    : task                 //* No → la deja igual
+            ...project,
+            tasks: tasks.map(task =>
+                task.idTask === updatedTask.idTask
+                    ? updatedTask
+                    : task
             )
         };
         setTasks(updatedProject.tasks);
-        saveProject(updatedProject); //* Esto es una funcion que hicimos para guardar el nuevo json generado en localstorage
+        saveProject(updatedProject);
     };
-    //* Guardar el proyecto en localstorage para no perder si recargamos
-    const saveProject = (updatedProject) => {
-        setProject(updatedProject);   //* Actualiza el estado de React (osea re-renderizar)
 
+    const saveProject = (updatedProject) => {
+        setProject(updatedProject);
         setUsers(prev => {
             const updated = prev.map(user => ({
-                ...user, //* Copiar todos los usuario (buena practica)
-                projects: user.projects.map(p => //* Recorremos todos los proyectos
-                    p.idProject === updatedProject.idProject
-                        ? updatedProject   //* encuentra el proyecto por id y lo reemplaza, esto es una triplete
-                        : p //* Si es el proyecto a actualizar lo cambiamos, si no lo dejamos como esta (siempre deberia ser true)
+                ...user,
+                projects: user.projects.map(p =>
+                    // ✅ FIX: comparar como strings
+                    String(p.idProject) === String(updatedProject.idProject)
+                        ? updatedProject
+                        : p
                 )
             }));
-            localStorage.setItem("user", JSON.stringify(updated));  //* Guardar en localStorage el nuevo objeto
-            return updated; //* Le decimos a React que actualice el estado
+            localStorage.setItem("user", JSON.stringify(updated));
+            return updated;
         });
     };
 
-    //* Funcion para cuando movemos las tareas actualizar su status no solo en pagina si no en JSON tambien
     const handleMoved = (taskId, newStatus) => {
         const updatedProject = {
             ...project,
             tasks: tasks.map(task =>
                 task.idTask === taskId
-                    ? { ...task, status: newStatus }  // copia la task y reemplaza solo el status
+                    ? { ...task, status: newStatus }
                     : task
             )
         };
@@ -146,32 +150,19 @@ export default function Dashboard() {
         addActivity(`Se movió la tarea "${movedTask?.nameTask}" a ${newStatus}`);
     };
 
-    //* Unas constantes que usa chakra
     const drawer = useDisclosure()
-
     const modal = useDisclosure()
 
-    const [columns, setColumns] = useState([
+    const COLUMNS = [
         { id: "PENDING", title: "Pendiente" },
         { id: "DOING", title: "En progreso" },
         { id: "DONE", title: "Terminado" }
-    ])
+    ]
 
-
-    // progreso
     const totalTasks = tasks.length;
-
-    const completedTasks = tasks.filter(
-        task => task.status === "DONE"
-    ).length;
-
-    const progress = totalTasks === 0
-        ? 0
-        : Math.round((completedTasks / totalTasks) * 100);
-
-    const pendingTasks = tasks.filter(
-        task => task.status !== "DONE"
-    ).length;
+    const completedTasks = tasks.filter(task => task.status === "DONE").length;
+    const progress = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+    const pendingTasks = tasks.filter(task => task.status !== "DONE").length;
 
     const pieData = [
         { name: "Completadas", value: completedTasks },
@@ -179,13 +170,9 @@ export default function Dashboard() {
     ];
 
     const projectSummary = users.flatMap(user =>
-        user.projects.map((project, index) => {
+        user.projects.map(project => {
             const total = project.tasks.length;
-
-            const completed = project.tasks.filter(
-                t => t.status === "DONE"
-            ).length;
-
+            const completed = project.tasks.filter(t => t.status === "DONE").length;
             const pending = total - completed;
 
 
@@ -202,14 +189,12 @@ export default function Dashboard() {
         })
     );
 
-    // actividad
     const addActivity = (message) => {
         const newEntry = {
             id: Date.now(),
             message,
             date: new Date().toLocaleString()
         };
-
         setActivity(prev => {
             const updated = [newEntry, ...prev];
             localStorage.setItem("activity", JSON.stringify(updated));
@@ -218,9 +203,8 @@ export default function Dashboard() {
     };
 
     const renderLabel = ({ name, value }) => {
-        const total = totalTasks || 1; // evitar división por 0
+        const total = totalTasks || 1;
         const percentage = Math.round((value / total) * 100);
-
         return `${percentage}%`;
     };
 
@@ -228,24 +212,17 @@ export default function Dashboard() {
     console.log("Usuarios: ", users)
     return (
         <>
-            {/* Contenido principal (no barra lateral) */}
             <Box className="contenedorDashboard">
                 <div className="dashboardBG"></div>
 
                 <Flex className="contenedorTareas">
                     <Box className="menuOpciones">
-                        {/* //* Boton que abre la barra lateral */}
-
-
                         <SideBar
                             context={"dashboard"}
-                            userId={userId}
+                            userId={owner}
                         />
-                        {/* //* Boton para agregar nuevas tareas */}
                         <Button colorScheme='blue' onClick={modal.onOpen}>
-
                             Nueva tarea
-
                             <ModalTask
                                 isOpen={modal.isOpen}
                                 onClose={modal.onClose}
@@ -261,79 +238,59 @@ export default function Dashboard() {
                             <Progress value={progress} colorScheme="green" />
                         </Box>
                     </Box>
+
                     <Tabs>
                         <TabList>
                             <Tab>Tareas</Tab>
+                            <Tab>Calendario</Tab>
                             <Tab>Resumen</Tab>
-                            <Tab>Three</Tab>
                         </TabList>
 
                         <TabPanels>
                             <TabPanel>
                                 <DragDropProvider
-
                                     onDragEnd={(event) => {
                                         if (event.canceled) return;
-                                        const type = event.operation.source?.type
-                                        const sourceId = event.operation.source?.id
-                                        const targetId = event.operation.target?.id
-                                        if (!targetId) return
-
-                                        if (type === "task") {
-                                            handleMoved(sourceId, targetId)
-                                        }
-
-                                        if (type === "column") {
-                                            setColumns(prev => {
-                                                const oldIndex = prev.findIndex(c => c.id === sourceId)
-                                                const newIndex = prev.findIndex(c => c.id === targetId)
-                                                const updated = [...prev]
-                                                updated.splice(oldIndex, 1)           // saca la columna
-                                                updated.splice(newIndex, 0, prev[oldIndex])  // la mete en nueva posición
-                                                return updated
-                                            })
-                                        }
+                                        const taskId = event.operation.source?.id;
+                                        const newStatus = event.operation.target?.id;
+                                        if (!newStatus) return;
+                                        setTasks((prev) =>
+                                            prev.map((task) =>
+                                                task.idTask === taskId
+                                                    ? { ...task, status: newStatus }
+                                                    : task
+                                            )
+                                        );
+                                        handleMoved(taskId, newStatus);
                                     }}
                                 >
-
-                                    <Flex className="listaTareas" >
-                                        {columns.map((column) => {
-                                            console.log("tasks:", tasks)
-                                            console.log("columns:", columns)
-                                            return <Column
-
+                                    <Flex className="listaTareas">
+                                        {COLUMNS.map((column) => (
+                                            <Column
                                                 key={column.id}
                                                 column={column}
-                                                tasks={
-                                                    tasks
-                                                        .filter(task => task.status === column.id)
-                                                        .sort((a, b) => {
-                                                            if (!a.dueDate) return 1;   // sin fecha abajo
-                                                            if (!b.dueDate) return -1;
-                                                            return new Date(a.dueDate) - new Date(b.dueDate);
-                                                        })
-                                                }
+                                                tasks={tasks.filter(task => task.status === column.id)}
                                                 onEditTask={handleEditTask}
                                                 onDeleteTask={handleDeleteTask}
                                             />
-                                        })}
+                                        ))}
                                     </Flex>
                                 </DragDropProvider>
                             </TabPanel>
+
                             <TabPanel>
                                 <CalendarView tasks={tasks} />
                             </TabPanel>
+
                             <TabPanel>
                                 <Flex gap={10} align="flex-start" wrap="wrap" className="listaProyectos">
                                     { }
                                     <Box mb={6}>
                                         <p style={{ fontWeight: "bold" }}>Resumen general</p>
-
                                         {projectSummary.length === 0 ? (
 
                                             <p>No hay proyectos</p>
                                         ) : (
-
                                             projectSummary.map(p => (
 
                                                 <Box
@@ -363,10 +320,8 @@ export default function Dashboard() {
                                         )}
                                     </Box>
 
-                                    {/* GRÁFICA */}
                                     <Box>
                                         <p>Resumen de tareas</p>
-
                                         {tasks.length === 0 ? (
                                             <p>No hay tareas</p>
                                         ) : (
@@ -389,37 +344,25 @@ export default function Dashboard() {
                                         )}
                                     </Box>
 
-                                    {/* HISTORIAL */}
                                     <Box flex="1">
                                         <p>Actividad reciente</p>
-
                                         {activity.length === 0 ? (
                                             <p>No hay actividad aún</p>
                                         ) : (
                                             activity.map(item => (
                                                 <Box key={item.id} p={2} borderBottom="1px solid gray">
-                                                    <strong>{item.message}</strong>
-                                                    <br />
+                                                    <strong>{item.message}</strong><br />
                                                     <small>{item.date}</small>
                                                 </Box>
                                             ))
                                         )}
                                     </Box>
-
                                 </Flex>
-                            </TabPanel>
-                            <TabPanel>
-                                <p>three!</p>
                             </TabPanel>
                         </TabPanels>
                     </Tabs>
-
                 </Flex>
-
-            </Box >
-
-            {/* //* Esto es la barra lateral */}
-
+            </Box>
         </>
     )
 }
