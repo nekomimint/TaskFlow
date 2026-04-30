@@ -5,16 +5,18 @@ import {
     AccordionIcon,
     Box,
     Flex,
-    useColorModeValue
+    useColorModeValue,
+    Tag
 } from '@chakra-ui/react'
+import { useEffect } from 'react';
 import { useDraggable } from '@dnd-kit/react';
 import AppIcon from '../AppIcon';
 import ButtonIcon from '../ButtonIcon';
 import './Tasks.css'
-
+import { Text } from '@chakra-ui/react';
 // Iconos
 import { LuTrash2, LuPencilLine } from "react-icons/lu"
-
+import TaskEdit from '../tasks/TaskEdit';
 // Aquí definimos los colores para que se vea rápido qué tan urgente es cada tarea
 // Usamos los mismos que acordamos: Rojo (alta), Naranja (media) y Verde (baja)
 const priorityColors = {
@@ -24,7 +26,7 @@ const priorityColors = {
 };
 
 // Le pasamos 'priority' como prop para que la tarjeta sepa de qué color pintarse
-export default function Tasks({ id, title, descripcion, dueDate, status, priority, onEditTask, onDeleteTask }) {
+export default function Tasks({ id, title, descripcion, dueDate, status, priority, onEditTask, onDeleteTask, dataTask }) {
 
     const { ref, listeners, attributes } = useDraggable({
         id: id,
@@ -53,8 +55,9 @@ export default function Tasks({ id, title, descripcion, dueDate, status, priorit
     const taskBg = useColorModeValue("gray.100", "gray.700");
     const taskText = useColorModeValue("black", "white");
 
-    console.log("dueDate:", dueDate);
-
+    console.log("dueDate:", dataTask.deadLine);
+    console.log("Nombre tarea: ", dataTask.nameTask)
+    console.log(dataTask.usersAsigned)
     return (
         <div ref={ref} {...attributes}>
             <AccordionItem
@@ -99,12 +102,23 @@ export default function Tasks({ id, title, descripcion, dueDate, status, priorit
                                 label="Editar tarea"
                                 onClick={handleEdit}
                             />
-
+                            <TaskEdit
+                                dataTask={dataTask}
+                                onUpdateTask={1}
+                            />
                             {dueDate && (
-                                <small style={{ marginTop: "5px", opacity: 0.7 }}>
-                                    {new Date(dueDate).toLocaleDateString()}
-                                </small>
+                                <Text>
+                                    {new Date(dataTask.deadLine).toLocaleDateString()}
+                                </Text>
                             )
+                            }
+                            {
+                                dataTask.usersAsigned.map(sharedUsr => {
+                                    return (
+                                        <Text key={sharedUsr}>{sharedUsr}</Text>
+                                    )
+
+                                })
                             }
 
                         </Flex>

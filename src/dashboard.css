@@ -38,3 +38,8 @@
     min-width: 75vw;
     max-width: 75vw;
 }
+
+.listaProyectos {
+    overflow-y: scroll;
+    max-height: 80vh;
+}

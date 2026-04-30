@@ -116,15 +116,66 @@ export default function ProjectsViewer() {
             projects: prev.projects.filter(p => p.idProject !== idProject)
         }))
     }
+    const handleEditProject = (updatedProject) => {
+        const originalProject = currentUser.projects.find(
+            p => p.idProject === updatedProject.idProject
+        )
+        const oldSharedUsers = originalProject?.sharedUsers ?? []
+        const newSharedUsers = updatedProject.sharedUsers ?? []
 
-    const handleEditProject = () => {
+        // Usuarios que se agregaron
+        const added = newSharedUsers.filter(id => !oldSharedUsers.includes(id))
+        // Usuarios que se quitaron
+        const removed = oldSharedUsers.filter(id => !newSharedUsers.includes(id))
 
+        setUsers(prev => {
+            const updated = prev.map(user => {
+                // Al dueño le actualiza el proyecto
+                if (user.id === userId) {
+                    return {
+                        ...user,
+                        projects: user.projects.map(p =>
+                            p.idProject === updatedProject.idProject ? updatedProject : p
+                        )
+                    }
+                }
+                // A los nuevos invitados les agrega la referencia
+                if (added.includes(user.id)) {
+                    return {
+                        ...user,
+                        sharedProjects: [
+                            ...(user.sharedProjects ?? []),
+                            { idProject: updatedProject.idProject, ownerId: userId, tasksAssigned: [] }
+                        ]
+                    }
+                }
+                // A los que se quitaron les elimina la referencia
+                if (removed.includes(user.id)) {
+                    return {
+                        ...user,
+                        sharedProjects: user.sharedProjects?.filter(
+                            sp => sp.idProject !== updatedProject.idProject
+                        ) ?? []
+                    }
+                }
+                return user
+            });
+            localStorage.setItem("user", JSON.stringify(updated));
+            return updated;
+        });
+
+        setCurrentUser(prev => ({
+            ...prev,
+            projects: prev.projects.map(p =>
+                p.idProject === updatedProject.idProject ? updatedProject : p
+            )
+        }))
     }
 
 
 
     // console.log("profilePhoto:", currentUser?.profilePhoto)
-    console.log("Datos actuale", currentUser)
+
     return (
 
 
@@ -165,8 +216,10 @@ export default function ProjectsViewer() {
                             </Link>
 
                             <EditProjects
-                                handleEditProject={handleEditProject}
-                                actualProjectData={project}
+                                ownerName={currentUser && currentUser.userName}
+                                onUpdateProject={handleEditProject}
+                                projectData={project}
+                                allData={users}
                             />
 
                             <DeleteProject

@@ -5,7 +5,7 @@ import './Column.css'
 import Tasks from "./Tasks"
 import { useColorModeValue } from "@chakra-ui/react";
 import { useDraggable } from '@dnd-kit/react';
-
+import TaskEdit from "../tasks/TaskEdit";
 export default function Column({ column, tasks, onEditTask, onDeleteTask }) {
     const { ref } = useDroppable({
         id: column.id,
@@ -35,10 +35,11 @@ export default function Column({ column, tasks, onEditTask, onDeleteTask }) {
                             title={tarea.nameTask}
                             descripcion={tarea.description}
                             status={tarea.status}
-                            dueDate={tarea.dueDate}
+                            dueDate={tarea.deadLine}
                             priority={tarea.priority}
                             onEditTask={onEditTask}
                             onDeleteTask={onDeleteTask}
+                            dataTask={tarea}
                         />
                     })}
                 </Accordion>

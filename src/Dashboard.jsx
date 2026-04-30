@@ -30,7 +30,6 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 export default function Dashboard() {
 
     const { userId, projectId } = useParams();
-
     const [users, setUsers] = useState([]);
     const [project, setProject] = useState(null);
     const [tasks, setTasks] = useState([]);
@@ -46,13 +45,13 @@ export default function Dashboard() {
             const foundOwner = parsed.find(user =>
                 user.projects.some(p => p.idProject === projectId)
             );
-            console.log("foundOwner:", foundOwner)  // ¿es undefined?
-            console.log("projectId:", projectId, typeof projectId)
-            console.log("idProjects en JSON:", parsed.flatMap(u => u.projects.map(p => ({ id: p.idProject, tipo: typeof p.idProject }))))
-            console.log("parsed:", parsed)
-            console.log("projectId:", projectId)
-            console.log("userId :", (foundOwner.id))
-            console.log("foundOwner:", foundOwner)
+            // console.log("foundOwner:", foundOwner)  // ¿es undefined?
+            // console.log("projectId:", projectId, typeof projectId)
+            // console.log("idProjects en JSON:", parsed.flatMap(u => u.projects.map(p => ({ id: p.idProject, tipo: typeof p.idProject }))))
+            // console.log("parsed:", parsed)
+            // console.log("projectId:", projectId)
+            // console.log("userId :", (foundOwner.id))
+            // console.log("foundOwner:", foundOwner)
             setOwner(foundOwner.id)  // para usarlo fuera del useEffect
 
             if (foundOwner) {
@@ -64,6 +63,12 @@ export default function Dashboard() {
             }
         }
     }, [projectId]);
+
+
+    const ownerName = users.find(u =>
+        u.projects.some(p => p.idProject === projectId)
+    )?.userName
+    console.log("Dueno: ", ownerName)
     const handleEditTask = (idTask, newTitle, newDesc) => {
         const updatedTasks = tasks.map(task =>
             task.idTask === idTask
@@ -183,6 +188,7 @@ export default function Dashboard() {
 
             const pending = total - completed;
 
+
             return {
                 id: project.idProject,
                 name: project.name?.trim()
@@ -191,7 +197,7 @@ export default function Dashboard() {
                 total,
                 completed,
                 pending,
-                ownerName: user.name || user.username || `Usuario ${user.id}` // 👈 AQUÍ
+                ownerName: user.name || user.username || `Propietario: ${user.userName}`
             };
         })
     );
@@ -219,7 +225,7 @@ export default function Dashboard() {
     };
 
 
-    console.log(owner)
+    console.log("Usuarios: ", users)
     return (
         <>
             {/* Contenido principal (no barra lateral) */}
@@ -245,6 +251,9 @@ export default function Dashboard() {
                                 onClose={modal.onClose}
                                 onCreateTask={handleCreateTask}
                                 projectId={projectId}
+                                usersShared={project?.sharedUsers ?? []}
+                                ownerName={ownerName}
+                                allUsers={users}
                             />
                         </Button>
                         <Box mt={4}>
@@ -315,23 +324,30 @@ export default function Dashboard() {
                                 <CalendarView tasks={tasks} />
                             </TabPanel>
                             <TabPanel>
-                                <Flex gap={10} align="flex-start" wrap="wrap">
-
+                                <Flex gap={10} align="flex-start" wrap="wrap" className="listaProyectos">
+                                    { }
                                     <Box mb={6}>
                                         <p style={{ fontWeight: "bold" }}>Resumen general</p>
 
                                         {projectSummary.length === 0 ? (
+
                                             <p>No hay proyectos</p>
                                         ) : (
 
                                             projectSummary.map(p => (
+
                                                 <Box
                                                     key={p.id}
                                                     p={3}
                                                     mb={2}
                                                     border="1px solid gray"
                                                     borderRadius="8px"
+
                                                 >
+                                                    {
+                                                        console.log("Resumen de proyecto: ", projectSummary)
+                                                        //console.log("Objeto traido: ",p)
+                                                    }
                                                     <strong>{p.name}</strong>
                                                     <br />
                                                     Total tareas: {p.total}
@@ -341,6 +357,7 @@ export default function Dashboard() {
                                                     Pendientes: {p.pending}
                                                     <br />
                                                     {p.ownerName}
+
                                                 </Box>
                                             ))
                                         )}
@@ -360,7 +377,7 @@ export default function Dashboard() {
                                                     nameKey="name"
                                                     cx="50%"
                                                     cy="50%"
-                                                    outerRadius={100}
+                                                    outerRadius={90}
                                                     label={renderLabel}
                                                 >
                                                     <Cell fill="#4CAF50" />
