@@ -90,7 +90,7 @@ export default function Login() {
                         idTask: crypto.randomUUID(),
                         nameTask: "New Task",
                         description: "Desc",
-                        deadLine: "date",
+                        deadLine: new Date().toISOString().split("T")[0],
                         status: "PENDING"
                     }]
                 }
