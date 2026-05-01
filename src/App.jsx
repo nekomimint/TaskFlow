@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Login from "./login"
 import Dashboard from "./dashboard"
 import ProjectsViewer from "./ProjectsViewer"
+import Profile from "./components/Profile"
 import React from "react";
 import { useState } from "react";
 export default function App() {
@@ -62,6 +63,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard/:userId/:projectId" element={<Dashboard />} />
         <Route path="/projects/:userId" element={<ProjectsViewer />} />
+        <Route path="/profile/:userId" element={<Profile />} />
       </Routes>
 
     </ChakraProvider>

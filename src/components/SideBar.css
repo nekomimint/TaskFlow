@@ -2,3 +2,43 @@
     max-width: 24p;
     max-height: 24p;
 }
+
+.sideHeader {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+}
+
+.headerCloseContext {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+
+.changerThemeButton {
+    padding-top: 1vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.upperSideBarContent {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2vh;
+}
+
+.bottomSideBarContent {
+    width: min-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

@@ -28,7 +28,7 @@ const priorityColors = {
 
 // Le pasamos 'priority' como prop para que la tarjeta sepa de qué color pintarse
 export default function Tasks({ id, title, descripcion, dueDate, status, priority, onEditTask, onDeleteTask, dataTask }) {
-
+    console.log("Datos actuales de tareas:", dataTask)
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
         id: id,
         data: { type: "task" }

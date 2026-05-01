@@ -75,7 +75,7 @@ export default function Dashboard() {
                 // console.log("foundOwner:", foundOwner)
                 setOwner(foundOwner.id)
 
-                // ✅ FIX: comparar como strings aquí también
+                // FIX: comparar como strings aquí también
                 const foundProject = foundOwner.projects.find(
                     p => String(p.idProject) === String(projectId)
                 );
@@ -228,14 +228,17 @@ export default function Dashboard() {
     return (
         <>
             <Box className="contenedorDashboard">
-                <SideBar
-                    context={"dashboard"}
-                    userId={owner}
-                />
+
                 <div className="dashboardBG"></div>
 
                 <Flex className="contenedorTareas">
 
+                    <div className="headerDashboard">
+                        <SideBar
+                            context={"dashboard"}
+                            userId={owner}
+                        />
+                    </div>
                     <Box className="menuOpciones">
 
                         <Button colorScheme='blue' onClick={modal.onOpen}>
