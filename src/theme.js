@@ -15,6 +15,29 @@ const styles = {
   }),
 };
 
-const theme = extendTheme({ config, styles });
+const components = {
+  Tabs: {
+    baseStyle: {
+      tabpanel: {
+        padding: 0,
+        margin: 0,
+      }
+    }
+  },
+  TabPanel: {
+    baseStyle: {
+      padding: 0,
+      margin: 0,
+    }
+  },
+  Progress: {
+    baseStyle: {
+      track: {
+        borderRadius: "full"
+      }
+    }
+  }
+}
 
+const theme = extendTheme({ config, styles, components });
 export default theme;

@@ -112,7 +112,7 @@ export default function SideBar({ context, userId }) {
                 <AlertDialogOverlay>
                     <AlertDialogContent>
                         <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                            ⚠️ Eliminar todos los datos
+                            Eliminar todos los datos
                         </AlertDialogHeader>
                         <AlertDialogBody>
                             Esta acción eliminará <strong>todos los proyectos, tareas y actividad</strong>.

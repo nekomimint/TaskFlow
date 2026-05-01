@@ -1,0 +1,9 @@
+[data-theme="light"] .columnContainer {
+    background: #f7f7f7;
+    color: #000;
+}
+
+[data-theme="dark"] .columnContainer {
+    background: #1a1a2e;
+    color: #fff;
+}

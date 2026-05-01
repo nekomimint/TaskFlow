@@ -9,7 +9,8 @@ import {
     Tag
 } from '@chakra-ui/react'
 import { useEffect } from 'react';
-import { useDraggable } from '@dnd-kit/react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import AppIcon from '../AppIcon';
 import ButtonIcon from '../ButtonIcon';
 import './Tasks.css'
@@ -28,10 +29,16 @@ const priorityColors = {
 // Le pasamos 'priority' como prop para que la tarjeta sepa de qué color pintarse
 export default function Tasks({ id, title, descripcion, dueDate, status, priority, onEditTask, onDeleteTask, dataTask }) {
 
-    const { ref, listeners, attributes } = useDraggable({
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
         id: id,
-        type: "task"
+        data: { type: "task" }
     });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),  // Transform no Translate
+        transition,
+        touchAction: "none",
+    }
 
     // Función para borrar la tarea con un mensaje de confirmación para no regarla
     function handleDelete() {
@@ -59,7 +66,7 @@ export default function Tasks({ id, title, descripcion, dueDate, status, priorit
     // console.log("Nombre tarea: ", dataTask.nameTask)
     // console.log(dataTask.usersAsigned)
     return (
-        <div ref={ref} {...attributes}>
+        <div ref={setNodeRef} style={style}>
             <AccordionItem
                 className="accordionStyle"
                 style={{

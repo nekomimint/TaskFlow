@@ -19,11 +19,15 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import Column from './components/projects_components/Column'
 import ModalTask from "./components/tasks/ModalTask"
 import SideBar from "./components/SideBar"
-import { DragDropProvider } from '@dnd-kit/react';
+import { arrayMove } from '@dnd-kit/sortable';
+import { DndContext, useSensor, useSensors, MouseSensor, TouchSensor, PointerSensor, DragOverlay } from '@dnd-kit/core';
+
 import { useParams } from "react-router-dom";
 import { useEffect } from 'react';
 import { Progress } from "@chakra-ui/react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+
+
 
 export default function Dashboard() {
 
@@ -38,6 +42,13 @@ export default function Dashboard() {
         { id: "DOING", title: "En progreso" },
         { id: "DONE", title: "Terminado" }
     ])
+    const sensors = useSensors(
+        useSensor(MouseSensor),
+        useSensor(TouchSensor),
+        useSensor(PointerSensor)
+    )
+    const [activeTask, setActiveTask] = useState(null)
+
     useEffect(() => {
         const data = localStorage.getItem("user");
         if (data) {
@@ -217,14 +228,16 @@ export default function Dashboard() {
     return (
         <>
             <Box className="contenedorDashboard">
+                <SideBar
+                    context={"dashboard"}
+                    userId={owner}
+                />
                 <div className="dashboardBG"></div>
 
                 <Flex className="contenedorTareas">
+
                     <Box className="menuOpciones">
-                        <SideBar
-                            context={"dashboard"}
-                            userId={owner}
-                        />
+
                         <Button colorScheme='blue' onClick={modal.onOpen}>
                             Nueva tarea
                             <ModalTask
@@ -237,37 +250,48 @@ export default function Dashboard() {
                                 allUsers={users}
                             />
                         </Button>
-                        <Box mt={4}>
-                            <p>Progreso del proyecto: {progress}%</p>
-                            <Progress value={progress} colorScheme="green" />
-                        </Box>
-                    </Box>
 
+                    </Box>
+                    <Box>
+                        <p>Progreso del proyecto: {progress}%</p>
+                        <Progress value={progress} colorScheme="green" />
+                    </Box>
                     <Tabs>
-                        <TabList>
+                        <TabList display={'flex'} justifyContent={'space-between'} paddingLeft={1} paddingRight={1}>
                             <Tab>Tareas</Tab>
                             <Tab>Calendario</Tab>
                             <Tab>Resumen</Tab>
                         </TabList>
 
-                        <TabPanels>
-                            <TabPanel>
-                                <DragDropProvider
-
+                        <TabPanels className="panelsTabular" display={'flex'} flexDir={'column'} flexWrap={'wrap'} >
+                            <TabPanel className="panelModule" m={0} p={0} >
+                                <DndContext
+                                    sensors={sensors}
+                                    onDragStart={(event) => {
+                                        if (event.active.data.current?.type === "task") {
+                                            setActiveTask(tasks.find(t => t.idTask === event.active.id))
+                                        }
+                                    }}
                                     onDragEnd={(event) => {
-                                        if (event.canceled) return;
-                                        const type = event.operation.source?.type
-                                        const sourceId = event.operation.source?.id
-                                        const targetId = event.operation.target?.id
+                                        const { active, over } = event
+                                        if (!over) return
 
-                                        console.log("type dnd:", type)
-                                        console.log("sourceId dnd:", sourceId)
-                                        console.log("targetId dnd:", targetId)
-
-                                        if (!targetId) return
+                                        const sourceId = active.id
+                                        const targetId = over.id
+                                        const type = active.data.current?.type
 
                                         if (type === "task") {
-                                            handleMoved(sourceId, targetId)
+                                            // Si se mueve a otra columna
+                                            if (active.data.current?.sortable?.containerId !== over.data.current?.sortable?.containerId) {
+                                                handleMoved(sourceId, targetId)
+                                            } else {
+                                                // Si se reordena dentro de la misma columna
+                                                setTasks(prev => {
+                                                    const oldIndex = prev.findIndex(t => t.idTask === sourceId)
+                                                    const newIndex = prev.findIndex(t => t.idTask === targetId)
+                                                    return arrayMove(prev, oldIndex, newIndex)
+                                                })
+                                            }
                                         }
 
                                         if (type === "column") {
@@ -277,7 +301,6 @@ export default function Dashboard() {
                                                 const updated = [...prev]
                                                 updated.splice(oldIndex, 1)
                                                 updated.splice(newIndex, 0, prev[oldIndex])
-                                                console.log("updated:", updated)
                                                 return updated
                                             })
                                         }
@@ -294,7 +317,7 @@ export default function Dashboard() {
                                             />
                                         ))}
                                     </Flex>
-                                </DragDropProvider>
+                                </DndContext>
                             </TabPanel>
 
                             <TabPanel>
