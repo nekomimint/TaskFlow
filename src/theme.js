@@ -16,26 +16,26 @@ const styles = {
 };
 
 const components = {
+
   Tabs: {
-    baseStyle: {
+    baseStyle: (props) => ({
+      root: {
+        bg: mode("#cecece", "#2b3448")(props),
+      },
+      tablist: {
+        bg: mode("#cecece", "#2b3448")(props),
+      },
+      tab: {
+        _selected: {
+          color: mode("black", "white")(props),
+          borderBottomColor: mode("black", "white")(props),
+        }
+      },
       tabpanel: {
         padding: 0,
         margin: 0,
       }
-    }
-  },
-  TabPanel: {
-    baseStyle: {
-      padding: 0,
-      margin: 0,
-    }
-  },
-  Progress: {
-    baseStyle: {
-      track: {
-        borderRadius: "full"
-      }
-    }
+    })
   }
 }
 

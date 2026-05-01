@@ -62,27 +62,27 @@ body {
 /* Mobile grande */
 @media (min-width: 480px) {
     .contenedorDashboard {
-        background-color: aqua;
+        /* background-color: aqua; */
     }
 }
 
 /* Tablet */
 @media (min-width: 768px) {
     .contenedorDashboard {
-        background-color: rgb(65, 144, 82);
+        /* background-color: rgb(65, 144, 82); */
     }
 }
 
 /* Desktop */
 @media (min-width: 1024px) {
     .contenedorDashboard {
-        background-color: rgb(152, 149, 49);
+        /* background-color: rgb(152, 149, 49); */
     }
 }
 
 /* Desktop grande */
 @media (min-width: 1280px) {
     .contenedorDashboard {
-        background-color: rgb(172, 63, 139);
+        /* background-color: rgb(172, 63, 139); */
     }
 }

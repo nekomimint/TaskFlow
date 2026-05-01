@@ -1,0 +1,361 @@
+.calendarContainer {
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.calendarLight {
+    background-color: #e2e2e2;
+    color: #1a1a1a;
+}
+
+.calendarDark {
+    background-color: #1e2533;
+    color: #e2e8f0;
+}
+
+/* Header */
+.calendarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.calendarNavBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    color: inherit;
+}
+
+.calendarNavBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.calendarTitle {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Dias de la semana */
+.calendarWeekDays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.calendarWeekDay {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 0;
+    opacity: 0.6;
+}
+
+/* Grid */
+.calendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendarCell {
+    min-height: 80px;
+    border-radius: 10px;
+    padding: 4px;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: all 0.15s ease;
+}
+
+.calendarCellEmpty {
+    background: transparent;
+    border: 1px solid transparent;
+}
+
+.calendarLight .calendarCellActive {
+    background-color: #f5f5f5;
+    border: 1px solid #d0d0d0;
+    cursor: pointer;
+}
+
+.calendarDark .calendarCellActive {
+    background-color: #2d3748;
+    border: 1px solid #4a5568;
+    cursor: pointer;
+}
+
+.calendarLight .calendarCellActive:hover {
+    background-color: #e8e8e8;
+}
+
+.calendarDark .calendarCellActive:hover {
+    background-color: #3a4a5c;
+}
+
+.calendarLight .calendarCellSelected {
+    background-color: #b8c8e8 !important;
+    border-color: #6b8ccc !important;
+}
+
+.calendarDark .calendarCellSelected {
+    background-color: #2b4a7a !important;
+    border-color: #5b8acc !important;
+}
+
+.calendarLight .calendarCellToday {
+    border: 2px solid #6b8ccc !important;
+    background-color: #dce8f5 !important;
+}
+
+.calendarDark .calendarCellToday {
+    border: 2px solid #5b8acc !important;
+    background-color: #1a365d !important;
+}
+
+/* Numero del dia */
+.calendarDayNumber {
+    font-size: 12px;
+    font-weight: 500;
+    display: block;
+    padding: 2px 4px;
+    opacity: 0.8;
+}
+
+.calendarDayToday {
+    font-weight: 800;
+    opacity: 1;
+    color: #5b8acc;
+}
+
+/* Tasks en la celda */
+.calendarTaskList {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 2px;
+}
+
+.calendarTaskChip {
+    width: 100%;
+    border-radius: 4px;
+    padding: 1px 4px;
+    border-left: 3px solid;
+    overflow: hidden;
+}
+
+.calendarLight .calendarTaskChip {
+    background-color: #e0e0e0;
+}
+
+.calendarDark .calendarTaskChip {
+    background-color: #4a5568;
+}
+
+.calendarTaskName {
+    font-size: 9px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.calendarTaskMore {
+    font-size: 9px;
+    opacity: 0.6;
+    padding: 0 4px;
+}
+
+/* Panel de detalle */
+.calendarDetail {
+    margin-top: 16px;
+    border-radius: 12px;
+    padding: 16px;
+    border-top: 3px solid #5b8acc;
+}
+
+.calendarLight .calendarDetail {
+    background-color: #f0f0f0;
+}
+
+.calendarDark .calendarDetail {
+    background-color: #2d3748;
+}
+
+.calendarDetailTitle {
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.calendarDetailEmpty {
+    font-size: 14px;
+    opacity: 0.6;
+}
+
+.calendarDetailList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.calendarDetailTask {
+    border-radius: 8px;
+    padding: 12px;
+    border-left: 4px solid;
+    transition: opacity 0.15s;
+}
+
+.calendarLight .calendarDetailTask {
+    background-color: #e8e8e8;
+}
+
+.calendarDark .calendarDetailTask {
+    background-color: #3a4a5c;
+}
+
+.calendarDetailTaskHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.calendarDetailTaskName {
+    font-weight: 600;
+    font-size: 14px;
+    flex: 1;
+}
+
+.calendarDetailBadges {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.calendarBadge {
+    font-size: 10px;
+    border-radius: 4px;
+    padding: 2px 8px;
+    color: white;
+}
+
+.calendarBadgeOutline {
+    font-size: 10px;
+    border-radius: 4px;
+    padding: 2px 8px;
+    border: 1px solid currentColor;
+    opacity: 0.8;
+}
+
+.calendarDetailDesc {
+    font-size: 12px;
+    margin-top: 4px;
+    opacity: 0.6;
+}
+
+/* Leyenda */
+.calendarLegend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.calendarLegendItem {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.calendarLegendDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+}
+
+.calendarLegendLabel {
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .calendarContainer {
+        padding: 10px;
+    }
+
+    .calendarCell {
+        min-height: 50px;
+        padding: 2px;
+    }
+
+    .calendarWeekDay {
+        font-size: 9px;
+    }
+
+    .calendarDayNumber {
+        font-size: 10px;
+    }
+
+    .calendarTaskChip {
+        display: none;
+    }
+
+    .calendarDetailBadges {
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 768px) {
+    .calendarContainer {
+        width: 75%;
+        margin: 0 auto;
+    }
+
+    .calendarCell {
+        min-height: 90px;
+    }
+}
+
+@media (min-width: 768px) {
+    .calendarContainer {
+        width: 75%;
+        margin: 0 auto;
+        min-width: 500px;
+        /* ✅ ancho mínimo para que las celdas no se compriman */
+    }
+
+    .calendarCell {
+        min-height: 90px;
+    }
+}
+
+/* ✅ Para pantallas intermedias */
+@media (min-width: 400px) and (max-width: 767px) {
+    .calendarContainer {
+        width: 100%;
+        min-width: 320px;
+    }
+
+    .calendarCell {
+        min-height: 65px;
+    }
+}
+
+.panelsTabula {
+    overflow-x: auto;
+}

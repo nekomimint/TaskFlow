@@ -2,9 +2,23 @@
     display: flex;
     flex-direction: column;
     /* background-color: aqua; */
-    min-width: 0;
-    min-height: 0;
+    min-width: 75%;
+    max-width: 75%;
+    min-height: auto;
     gap: 2%;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+    .menuOpciones {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        /* background-color: aqua; */
+        min-width: 75%;
+        min-height: 0;
+        gap: 2%;
+    }
 }
 
 
@@ -32,28 +46,27 @@
     display: flex;
     flex-direction: row;
     /* background-color: blue; */
-
-    padding: 1%;
-    gap: 2%;
+    padding: 2%;
     min-width: 75vw;
     max-width: 75vw;
+    justify-content: space-between;
+    min-height: 60vh;
+
 }
 
+[data-theme="light"] .listaProyectos {
+    background-color: rgb(215, 214, 214);
+}
+
+[data-theme="dark"] .listaProyectos {
+    background-color: #262e40;
+
+}
+
+
 .listaProyectos {
+    padding: 2%;
     overflow-y: scroll;
-    max-height: 80vh;
-
-    .chakra-tabs {
-        width: 100%;
-    }
-
-    .chakra-tabs__tab-panels {
-        width: 100%;
-    }
-
-    .chakra-tabs__tab-panel {
-        padding: 16px !important;
-        width: 100%;
-    }
-
+    max-height: 60vh;
+    border-radius: 10px;
 }

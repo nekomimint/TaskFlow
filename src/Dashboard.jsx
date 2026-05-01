@@ -21,7 +21,7 @@ import ModalTask from "./components/tasks/ModalTask"
 import SideBar from "./components/SideBar"
 import { arrayMove } from '@dnd-kit/sortable';
 import { DndContext, useSensor, useSensors, MouseSensor, TouchSensor, PointerSensor, DragOverlay } from '@dnd-kit/core';
-
+import { Text } from '@chakra-ui/react';
 import { useParams } from "react-router-dom";
 import { useEffect } from 'react';
 import { Progress } from "@chakra-ui/react";
@@ -239,35 +239,36 @@ export default function Dashboard() {
                             userId={owner}
                         />
                     </div>
-                    <Box className="menuOpciones">
+                    <Box className="menuOpciones" >
 
                         <Button colorScheme='blue' onClick={modal.onOpen}>
                             Nueva tarea
-                            <ModalTask
-                                isOpen={modal.isOpen}
-                                onClose={modal.onClose}
-                                onCreateTask={handleCreateTask}
-                                projectId={projectId}
-                                usersShared={project?.sharedUsers ?? []}
-                                ownerName={ownerName}
-                                allUsers={users}
-                            />
-                        </Button>
 
+                        </Button>
+                        <ModalTask
+                            isOpen={modal.isOpen}
+                            onClose={modal.onClose}
+                            onCreateTask={handleCreateTask}
+                            projectId={projectId}
+                            usersShared={project?.sharedUsers ?? []}
+                            ownerName={ownerName}
+                            allUsers={users}
+                        />
+                        <Box display={'flex'} flexDir={'column'}>
+                            <Text fontSize='xl'>Progreso del proyecto: {progress}%</Text>
+                            <Progress value={progress} colorScheme="green" rounded={'10px'} />
+                        </Box>
                     </Box>
-                    <Box>
-                        <p>Progreso del proyecto: {progress}%</p>
-                        <Progress value={progress} colorScheme="green" />
-                    </Box>
+
                     <Tabs>
-                        <TabList display={'flex'} justifyContent={'space-between'} paddingLeft={1} paddingRight={1}>
+                        <TabList display={'flex'} justifyContent={'space-around'} paddingLeft={1} paddingRight={1}>
                             <Tab>Tareas</Tab>
                             <Tab>Calendario</Tab>
                             <Tab>Resumen</Tab>
                         </TabList>
 
-                        <TabPanels className="panelsTabular" display={'flex'} flexDir={'column'} flexWrap={'wrap'} >
-                            <TabPanel className="panelModule" m={0} p={0} >
+                        <TabPanels className="panelsTabular" display={'flex'} flexDir={'column'} justifyContent={'center'} >
+                            <TabPanel className="panelModule" m={0} p={0}  >
                                 <DndContext
                                     sensors={sensors}
                                     onDragStart={(event) => {
@@ -279,20 +280,34 @@ export default function Dashboard() {
                                         const { active, over } = event
                                         if (!over) return
 
+
                                         const sourceId = active.id
                                         const targetId = over.id
                                         const type = active.data.current?.type
 
+                                        console.log("type:", type)
+                                        console.log("sourceId:", sourceId)
+                                        console.log("targetId:", targetId)
+                                        console.log("containerId source:", active.data.current?.sortable?.containerId)
+                                        console.log("containerId target:", over.data.current?.sortable?.containerId)
                                         if (type === "task") {
-                                            // Si se mueve a otra columna
-                                            if (active.data.current?.sortable?.containerId !== over.data.current?.sortable?.containerId) {
-                                                handleMoved(sourceId, targetId)
+                                            const sourceContainer = active.data.current?.sortable?.containerId
+                                            const targetContainer = over.data.current?.sortable?.containerId ?? over.id
+
+                                            if (sourceContainer !== targetContainer) {
+                                                // Se mueve a otra columna, targetId debe ser el status de la columna
+                                                const newStatus = over.data.current?.type === "task"
+                                                    ? over.data.current?.sortable?.containerId  // soltó sobre una tarea
+                                                    : over.id  // soltó sobre la columna directamente
+                                                handleMoved(sourceId, newStatus)
                                             } else {
-                                                // Si se reordena dentro de la misma columna
+                                                // Reordena dentro de la misma columna
                                                 setTasks(prev => {
                                                     const oldIndex = prev.findIndex(t => t.idTask === sourceId)
                                                     const newIndex = prev.findIndex(t => t.idTask === targetId)
-                                                    return arrayMove(prev, oldIndex, newIndex)
+                                                    const reordered = arrayMove(prev, oldIndex, newIndex)
+                                                    saveProject({ ...project, tasks: reordered })
+                                                    return reordered
                                                 })
                                             }
                                         }
