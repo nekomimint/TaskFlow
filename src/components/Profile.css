@@ -1,0 +1,113 @@
+.profileContainer {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.profileLight {
+    background-color: #f0f0f0;
+    color: #1a1a1a;
+}
+
+.profileDark {
+    background-color: #1a2233;
+    color: #e2e8f0;
+}
+
+.profileHeader {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.profileBackBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: inherit;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.profileBackBtn:hover {
+    opacity: 0.7;
+}
+
+.profileAvatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.profileDropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 16px;
+    border-radius: 16px;
+    border: 2px dashed transparent;
+    transition: all 0.2s ease;
+}
+
+.profileDropzone:hover {
+    border-color: #5b8acc;
+}
+
+.profileDropzoneActive {
+    border-color: #5b8acc;
+    background-color: rgba(91, 138, 204, 0.1);
+}
+
+.profileDropzoneHint {
+    font-size: 12px;
+    opacity: 0.6;
+    text-align: center;
+}
+
+.profileInfo {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.profileName {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.profileStats {
+    font-size: 14px;
+    opacity: 0.6;
+    margin: 4px 0;
+}
+
+.profileActions {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.profileLoading {
+    padding: 40px;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .profileContainer {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+}

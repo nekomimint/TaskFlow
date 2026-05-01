@@ -1,7 +1,18 @@
 import { useState } from 'react'
-import './App.css'
 import './Login.css'
+import './App.css'
+import { useDisclosure } from '@chakra-ui/react'
+import { useRef } from 'react'
 import { Input } from '@chakra-ui/react'
+import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
+    AlertDialogCloseButton,
+} from '@chakra-ui/react'
 import { ChakraProvider, Button } from '@chakra-ui/react'
 import { Avatar, AvatarBadge, AvatarGroup } from '@chakra-ui/react'
 import { Center, Square, Circle } from '@chakra-ui/react'
@@ -57,7 +68,7 @@ export default function Login() {
         }
 
         const exists = users.some(u => u.userName === userName)
-        
+
         if (exists) {
             setErrorCreate("El usuario ya existe");
             return
@@ -88,7 +99,7 @@ export default function Login() {
 
         handleCreateUser(newUser)
 
-        // ✅ RF23 - Guardar currentUserId para que SideBar siempre lo encuentre
+        // RF23 - Guardar currentUserId para que SideBar siempre lo encuentre
         localStorage.setItem("currentUserId", newUser.id)
 
         navigate(`/projects/${newUser.id}`)
@@ -96,7 +107,38 @@ export default function Login() {
 
     const [userNameLogin, setUserNameLogin] = useState("")
     const [passwordLogin, setPasswordLogin] = useState("")
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const cancelRef = useRef()
+    const [pendingData, setPendingData] = useState(null)  // guarda el JSON antes de confirmar
 
+    const handleImport = (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+
+        const reader = new FileReader()
+        reader.onload = () => {
+            try {
+                const parsed = JSON.parse(reader.result)
+                if (!Array.isArray(parsed)) {
+                    alert("El archivo no tiene el formato correcto")
+                    return
+                }
+                setPendingData(parsed)  // guarda los datos
+                onOpen()               // abre el dialog
+            } catch {
+                alert("El archivo no es un JSON válido")
+            }
+        }
+        reader.readAsText(file)
+    }
+
+    const confirmImport = () => {
+        localStorage.setItem("user", JSON.stringify(pendingData))
+        setUsers(pendingData)
+        setPendingData(null)
+        onClose()
+
+    }
     function handleLogin() {
         if (!userNameLogin.trim() || !passwordLogin.trim()) {
             setErrorLogin("Debes llenar todos los campos");
@@ -258,12 +300,42 @@ export default function Login() {
                                             Entrar
                                         </Button>
                                     </Center>
+                                    <Center mt={2}>
+                                        <label className="profileImportLabel">
+                                            <input
+                                                type="file"
+                                                accept=".json"
+                                                onChange={handleImport}
+                                                style={{ display: "none" }}
+                                            />
+                                            Importar datos desde JSON
+                                        </label>
+                                    </Center>
                                 </Stack>
                             </motion.div>
                         )}
                     </AnimatePresence>
+
                 </Center>
             </Box>
+            <AlertDialog isOpen={isOpen} onClose={onClose} leastDestructiveRef={cancelRef}>
+                <AlertDialogOverlay>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>Importar datos</AlertDialogHeader>
+                        <AlertDialogBody>
+                            ¿Estás seguro? Esto reemplazará todos los datos actuales.
+                        </AlertDialogBody>
+                        <AlertDialogFooter>
+                            <Button ref={cancelRef} onClick={onClose}>
+                                Cancelar
+                            </Button>
+                            <Button colorScheme="blue" onClick={confirmImport}>
+                                Importar
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
         </>
     )
 }

@@ -1,3 +1,21 @@
+[data-theme="light"] .userLogin {
+    background-color: #cecece;
+    color: black;
+}
+
+[data-theme="dark"] .userLogin {
+    background-color: #2b3448;
+}
+
+[data-theme="light"] .createUser {
+    background-color: #cecece;
+    color: black;
+}
+
+[data-theme="dark"] .createUser {
+    background-color: #2b3448;
+}
+
 .avatarContainer {
     display: flex;
     flex-direction: row;
@@ -61,3 +79,33 @@
 }
 
 .loginButton {}
+
+/* Tablet */
+@media (max-width: 768px) {
+
+    .userLogin,
+    .createUser {
+        max-width: 60vw;
+        min-width: 60vw;
+    }
+}
+
+/* Móvil */
+@media (max-width: 480px) {
+
+    .userLogin,
+    .createUser {
+        max-width: 85vw;
+        min-width: 85vw;
+        padding: 8%;
+    }
+
+    .avatarContainer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .avatarTextInfo {
+        width: 100%;
+    }
+}
