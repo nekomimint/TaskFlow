@@ -1,5 +1,5 @@
 import { ChakraProvider, Button } from "@chakra-ui/react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import Login from "./login"
 import Dashboard from "./dashboard"
 import ProjectsViewer from "./ProjectsViewer"
