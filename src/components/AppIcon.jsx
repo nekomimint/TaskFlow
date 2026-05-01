@@ -7,6 +7,7 @@ import { LuSunDim } from "react-icons/lu";
 import { LuChevronFirst } from "react-icons/lu";
 import { LuChevronLast } from "react-icons/lu";
 import { LuX } from "react-icons/lu";
+import { LuDoorOpen } from "react-icons/lu";
 const iconMap = {
     LuGrip,
     LuPencilLine,
@@ -16,6 +17,7 @@ const iconMap = {
     LuChevronFirst,
     LuChevronLast,
     LuX,
+    LuDoorOpen,
     // agrega los que necesites...
 };
 

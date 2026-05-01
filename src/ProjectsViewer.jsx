@@ -12,7 +12,9 @@ import "./ProjectsViewer.css"
 import { Heading } from '@chakra-ui/react'
 import EditProjects from "./components/projects_components/EditProjects"
 import DeleteProject from "./components/projects_components/DeleteProjects"
-
+import SingleProject from "./components/projects_components/singleProject"
+import SharedSingleProject from "./components/projects_components/sharedSingleProject"
+import { Box } from "@chakra-ui/react"
 export default function ProjectsViewer() {
     const { userId } = useParams();
     const [users, setUsers] = useState([]);
@@ -163,61 +165,45 @@ export default function ProjectsViewer() {
 
     return (
         <div className="superContainer">
-            <div className="upperBar">
-                <div className="spacer" />
+            <div className="upperBar" >
+
                 <SideBar
                     context={"projects"}
                     userId={userId}
                 />
-                <Heading>Proyectos</Heading>
-                <Avatar
-                    src={currentUser?.profilePhoto ?? undefined}
-                    size="xl"
-                >
-                    <AvatarBadge boxSize='1em' bg='#c7c3ff' />
-                </Avatar>
+                <Heading>Proyectos de {currentUser?.userName}</Heading>
+                <div className="spacer" />
             </div>
 
             {currentUser && (
                 <div key={currentUser.id} className="projectsContainer">
-                    <h2>{currentUser.userName}</h2>
+
 
                     {currentUser.projects.map(project => (
-                        <div key={project.idProject} className="projectCard">
-                            <h3>{project.nameProject}</h3>
-                            <Link to={`/dashboard/${userId}/${project.idProject}`}>
-                                <Button>Go</Button>
-                            </Link>
-                            <EditProjects
-                                ownerName={currentUser && currentUser.userName}
-                                onUpdateProject={handleEditProject}
-                                projectData={project}
-                                allData={users}
-                            />
-                            <DeleteProject
-                                onDelete={handleDeleteProject}
-                                idProject={project.idProject}
-                            />
-                        </div>
+                        <SingleProject
+                            key={project.idProject}
+                            project={project}
+                            userId={userId}
+                            ownerName={currentUser.userName}
+                            allData={users}
+                            onUpdateProject={handleEditProject}
+                            onDeleteProject={handleDeleteProject}
+                        />
                     ))}
                 </div>
             )}
 
-            <h2>Compartidos conmigo</h2>
-            {currentUser && currentUser.sharedProjects?.map(shared => {
-                const owner = users.find(u => u.id === shared.ownerId)
-                const project = owner?.projects.find(p => p.idProject === shared.idProject)
-                if (!project) return null
-                return (
-                    <div key={shared.idProject} className="projectCard">
-                        <h3>{project.nameProject}</h3>
-                        <p>De: {owner.userName}</p>
-                        <Link to={`/dashboard/${userId}/${project.idProject}`}>
-                            <Button>Go</Button>
-                        </Link>
-                    </div>
-                )
-            })}
+            <Heading>Proyectos compartidos</Heading>
+            <div className="sharedContainer">
+                {currentUser?.sharedProjects?.map(shared => (
+                    <SharedSingleProject
+                        key={shared.idProject}
+                        shared={shared}
+                        users={users}
+                        userId={userId}
+                    />
+                ))}
+            </div>
 
             <Button onClick={modal.onOpen}>
                 New project

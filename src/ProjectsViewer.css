@@ -7,19 +7,26 @@
 
 .upperBar {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
+    width: 80%;
+    margin-top: 2%;
+    margin-bottom: 2%;
 }
 
 
 .projectsContainer {
-    background-color: aqua;
-    max-width: 80vw;
-    min-width: 80vw;
+    max-width: 80%;
+    min-width: 80%;
     overflow-y: scroll;
     max-height: 70vh;
+
 }
 
-.projectCard {
-    background-color: blueviolet;
+.sharedContainer {
+    max-width: 80%;
+    min-width: 80%;
+    overflow-y: scroll;
+    max-height: 70vh;
+    overflow-y: scroll;
 }
