@@ -91,7 +91,9 @@ export default function Login() {
                         nameTask: "New Task",
                         description: "Desc",
                         deadLine: new Date().toISOString().split("T")[0],
-                        status: "PENDING"
+                        status: "PENDING",
+                        priority: "low",
+                        usersAsigned: []
                     }]
                 }
             ]
